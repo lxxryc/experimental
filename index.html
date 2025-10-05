@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tactical Messenger — Final Version</title>
+<style>
+  :root{
+    --bg:#0b0b0c;
+    --panel:#111214;
+    --col-2:#151517;
+    --muted:#9aa0a3;
+    --accent:#1877f2;
+    --danger:#e04b4b;
+    --glass:rgba(255,255,255,0.03);
+    --mono:"Segoe UI Mono","Courier New",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:var(--bg);color:#e6eef6;overflow:hidden}
+  ::-webkit-scrollbar{width:0;height:0}
+
+  /* Full edge layout */
+  body{display:flex;align-items:stretch;justify-content:center}
+  .app{width:100%;height:100vh;display:grid;grid-template-columns:300px 1fr 320px;overflow:hidden;background:var(--panel)}
+
+  @media (max-width:1000px){
+    .app{grid-template-columns:1fr;position:relative}
+    .leftcol{position:fixed;left:0;top:0;bottom:0;width:75%;max-width:360px;transform:translateX(-110%);transition:transform .25s ease;z-index:40;background:var(--panel)}
+    .leftcol.open{transform:translateX(0)}
+    .rightcol{position:fixed;right:0;top:0;bottom:0;width:80%;max-width:360px;background:var(--panel);transform:translateX(110%);transition:transform .25s ease;z-index:40}
+    .rightcol.open{transform:translateX(0)}
+    .console-toggle{display:block!important}
+  }
+
+  /* Left column */
+  .leftcol{padding:14px;border-right:1px solid var(--glass);display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.01))}
+  .brand{display:flex;gap:10px;align-items:center;cursor:pointer}
+  .logo{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,#0b2b5b,#04102b);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);font-family:var(--mono)}
+  .brand h1{margin:0;font-size:15px}
+  .brand p{margin:0;font-size:12px;color:var(--muted)}
+
+  .profile{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02)}
+  .avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(180deg,#0f2b54,#051026);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);font-family:var(--mono)}
+  .meta h3{margin:0;font-size:14px}
+  .meta p{margin:0;font-size:12px;color:var(--muted)}
+  .edit-profile{font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);background:transparent;color:var(--muted);cursor:pointer}
+
+  .search{display:flex;gap:8px;align-items:center}
+  .search input{flex:1;padding:8px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit;font-size:13px}
+
+  .rooms{flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px;padding-right:6px}
+  .room{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer}
+  .room:hover{background:rgba(255,255,255,0.02)}
+  .room.active{background:rgba(24,119,242,0.08);border-left:3px solid var(--accent);padding-left:8px}
+  .rleft{display:flex;gap:8px;align-items:center;min-width:0}
+  .rname{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rmeta{font-size:12px;color:var(--muted)}
+
+  .left-foot{display:flex;gap:8px;align-items:center}
+  .btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted);cursor:pointer;font-size:13px}
+  .btn.primary{background:var(--accent);color:#fff;border:none}
+
+  /* Center */
+  .centercol{display:flex;flex-direction:column;height:100%;overflow:hidden}
+  .center-header{padding:12px;border-bottom:1px solid var(--glass);display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .room-info{display:flex;flex-direction:column}
+  .room-title{font-weight:700;font-family:var(--mono);font-size:16px}
+  .room-sub{color:var(--muted);font-size:12px}
+  .console-toggle{display:none;padding:6px 10px;border-radius:8px;border:1px solid var(--glass);background:transparent;color:var(--muted);cursor:pointer}
+
+  .conversation{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+  .msg-row{display:flex;flex-direction:column;max-width:70%;align-self:flex-start}
+  .msg-row.me{align-self:flex-end}
+  .bubble{padding:10px 12px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,0.6);font-size:14px;line-height:1.25}
+  .bubble.me{background:linear-gradient(180deg,#1877f2,#165fc8);color:#fff;border-bottom-right-radius:4px}
+  .bubble.other{background:#131517;color:#e6eef6;border:1px solid rgba(255,255,255,0.03);border-bottom-left-radius:4px}
+  .bubble .who{font-weight:700;font-size:12px;margin-bottom:6px}
+  .bubble .text{white-space:pre-wrap;word-break:break-word}
+  .bubble .img{max-width:280px;border-radius:8px;margin-top:8px;display:block}
+  .meta-line{display:flex;justify-content:flex-end;gap:8px;font-size:11px;color:var(--muted);margin-top:6px}
+
+  .composer{display:flex;gap:8px;padding:10px;border-top:1px solid var(--glass);align-items:center}
+  .inputwrap{flex:1;display:flex;gap:8px;align-items:center;background:#0f1112;padding:6px;border-radius:26px;border:1px solid rgba(255,255,255,0.02)}
+  .composer input[type="text"]{flex:1;padding:10px;border:0;background:transparent;color:inherit;font-size:14px;outline:none}
+  .attach-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:18px}
+
+  /* Right column */
+  .rightcol{padding:14px;border-left:1px solid var(--glass);display:flex;flex-direction:column;gap:12px;background:var(--panel)}
+  .profile-large{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px}
+  .profile-large .avatar{width:88px;height:88px;font-size:28px}
+  .right-actions{display:flex;flex-direction:column;gap:8px}
+  .small-muted{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- LEFT -->
+  <div class="leftcol" id="leftcol">
+    <div class="brand" id="toggleLeft"><div class="logo">TM</div><div><h1>Tactical</h1><p class="small-muted">Field comms</p></div></div>
+
+    <div class="profile">
+      <div class="avatar" id="avatar">A</div>
+      <div class="meta">
+        <h3 id="displayName">Anonymous</h3>
+        <p id="displayTag" class="small-muted">Field Agent</p>
+        <div id="userIdLabel" class="small-muted"></div>
+      </div>
+      <button class="edit-profile" id="editProfileBtn">Edit</button>
+    </div>
+
+    <div class="search"><input id="searchRooms" placeholder="Search Messenger" /></div>
+    <div class="rooms" id="roomsList"></div>
+    <div class="left-foot"><button class="btn" id="newRoomBtn">+ New Room</button></div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="centercol">
+    <div class="center-header">
+      <div class="room-info">
+        <div class="room-title" id="roomTitle">#global-ops</div>
+        <div class="room-sub" id="roomSub">Public (fixed)</div>
+      </div>
+      <button class="console-toggle" id="toggleConsole">⚙️ Console</button>
+    </div>
+
+    <div class="conversation" id="conversation"></div>
+
+    <div class="composer">
+      <div class="inputwrap">
+        <button class="attach-btn" id="attachBtn">📎</button>
+        <input id="msgInput" type="text" placeholder="Type a message..." autocomplete="off" />
+        <input id="fileInput" type="file" accept="image/*" style="display:none" />
+      </div>
+      <button class="btn primary" id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="rightcol" id="rightcol">
+    <div class="profile-large">
+      <div class="avatar" id="rightAvatar">A</div>
+      <h3 id="rightName">Anonymous</h3>
+      <div class="small-muted" id="rightStatus">Active</div>
+    </div>
+    <div class="right-actions">
+      <div class="small-muted">Participants: <strong id="consoleParticipants">1</strong></div>
+      <div class="small-muted">Messages: <strong id="consoleMessages">0</strong></div>
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.05)" />
+      <button class="btn" id="clearRoomBtn">Clear Messages</button>
+      <button class="btn" id="deleteRoomBtn">Delete Room</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY='tactical-messenger';
+function uuid(){return'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16);});}
+
+const stored=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+const userId=stored.userId||uuid();
+const superOwnerId=stored.superOwnerId||userId;
+const profile=stored.profile||{name:'',tag:'Field Agent'};
+if(!profile.name){
+  const n=prompt('Enter your display name:')||'Anonymous';
+  profile.name=n.trim()||'Anonymous';
+}
+const state={
+  userId,superOwnerId,profile,
+  rooms:stored.rooms||{'#global-ops':[]},
+  roomOwners:stored.roomOwners||{'#global-ops':'System'},
+  roomPrivacy:stored.roomPrivacy||{'#global-ops':'public'},
+  currentRoom:stored.currentRoom||'#global-ops'
+};
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+
+const avatar=document.getElementById('avatar'),
+displayName=document.getElementById('displayName'),
+displayTag=document.getElementById('displayTag'),
+userIdLabel=document.getElementById('userIdLabel'),
+roomsList=document.getElementById('roomsList'),
+conversation=document.getElementById('conversation'),
+roomTitle=document.getElementById('roomTitle'),
+roomSub=document.getElementById('roomSub'),
+rightAvatar=document.getElementById('rightAvatar'),
+rightName=document.getElementById('rightName'),
+consoleParticipants=document.getElementById('consoleParticipants'),
+consoleMessages=document.getElementById('consoleMessages'),
+msgInput=document.getElementById('msgInput'),
+sendBtn=document.getElementById('sendBtn'),
+newRoomBtn=document.getElementById('newRoomBtn'),
+editProfileBtn=document.getElementById('editProfileBtn'),
+clearRoomBtn=document.getElementById('clearRoomBtn'),
+deleteRoomBtn=document.getElementById('deleteRoomBtn'),
+attachBtn=document.getElementById('attachBtn'),
+fileInput=document.getElementById('fileInput'),
+searchRooms=document.getElementById('searchRooms'),
+rightcol=document.getElementById('rightcol');
+
+function escapeHtml(s){return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+function renderProfile(){
+  avatar.textContent=(state.profile.name||'A')[0].toUpperCase();
+  displayName.textContent=state.profile.name;
+  displayTag.textContent=state.profile.tag;
+  userIdLabel.textContent=`id:${state.userId.slice(0,8)}${state.userId===state.superOwnerId?' 👑':''}`;
+  rightAvatar.textContent=avatar.textContent;
+  rightName.textContent=state.profile.name;
+  save();
+}
+
+function renderRooms(filter=''){
+  roomsList.innerHTML='';
+  Object.keys(state.rooms).forEach(r=>{
+    if(filter&&!r.toLowerCase().includes(filter.toLowerCase()))return;
+    const el=document.createElement('div');
+    el.className='room'+(r===state.currentRoom?' active':'');
+    el.innerHTML=`<div class="rleft"><div style="width:38px;height:38px;border-radius:8px;background:#0a0b0c;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent)">${r[1]||r[0]}</div><div><div class="rname">${escapeHtml(r)}</div><div class="rmeta">${escapeHtml(state.roomOwners[r]||'')} · ${escapeHtml(state.roomPrivacy[r]||'')}</div></div></div>`;
+    el.onclick=()=>{state.currentRoom=r;save();renderAll();};
+    if(r!=='#global-ops'){
+      const canDel=(state.roomOwners[r]===state.profile.name)||(state.userId===state.superOwnerId);
+      if(canDel){
+        const del=document.createElement('button');
+        del.textContent='🗑';del.style.marginLeft='auto';del.onclick=e=>{e.stopPropagation();if(!confirm('Delete room?'))return;delete state.rooms[r];delete state.roomOwners[r];delete state.roomPrivacy[r];state.currentRoom='#global-ops';save();renderAll();};
+        el.appendChild(del);
+      }
+    }
+    roomsList.appendChild(el);
+  });
+}
+
+function renderMessages(){
+  conversation.innerHTML='';
+  roomTitle.textContent=state.currentRoom;
+  const privacy=state.roomPrivacy[state.currentRoom]||'public';
+  roomSub.textContent=(privacy==='private'?'Private':'Public')+(state.currentRoom==='#global-ops'?' (fixed)':'');
+  (state.rooms[state.currentRoom]||[]).forEach((m,i)=>{
+    const row=document.createElement('div');
+    row.className='msg-row '+(m.from===state.profile.name?'me':'other');
+    const bubble=document.createElement('div');
+    bubble.className='bubble '+(m.from===state.profile.name?'me':'other');
+    if(m.from!==state.profile.name)bubble.innerHTML+=`<div class="who">${escapeHtml(m.from)}</div>`;
+    bubble.innerHTML+=`<div class="text">${m.textImage?`<img src="${m.textImage}" class="img"/>`:escapeHtml(m.text)}</div><div class="meta-line">${new Date(m.ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>`;
+    row.appendChild(bubble);
+    conversation.appendChild(row);
+  });
+  conversation.scrollTop=conversation.scrollHeight;
+  consoleParticipants.textContent=new Set((state.rooms[state.currentRoom]||[]).map(m=>m.from)).size;
+  consoleMessages.textContent=(state.rooms[state.currentRoom]||[]).length;
+}
+
+function renderAll(){renderProfile();renderRooms(searchRooms.value);renderMessages();}
+
+sendBtn.onclick=()=>send();
+msgInput.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();send();}};
+function send(img){const text=msgInput.value.trim();if(!text&&!img)return;const m={from:state.profile.name,text:text,ts:Date.now()};if(img)m.textImage=img;state.rooms[state.currentRoom].push(m);msgInput.value='';save();renderMessages();}
+attachBtn.onclick=()=>fileInput.click();
+fileInput.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>send(r.result);r.readAsDataURL(f);};
+
+newRoomBtn.onclick=()=>{const n=prompt('Room name (#name):','#');if(!n)return;const name=n.trim();if(!name||state.rooms[name])return alert('Invalid or exists');const priv=confirm('Make this room private?');state.rooms[name]=[];state.roomOwners[name]=state.profile.name;state.roomPrivacy[name]=priv?'private':'public';state.currentRoom=name;save();renderAll();};
+editProfileBtn.onclick=()=>{const n=prompt('Enter new name:',state.profile.name);if(!n)return;state.profile.name=n.trim()||state.profile.name;renderProfile();}
+clearRoomBtn.onclick=()=>{if(!confirm('Clear all messages in this room?'))return;state.rooms[state.currentRoom]=[];save();renderMessages();}
+deleteRoomBtn.onclick=()=>{const r=state.currentRoom;if(r==='#global-ops')return alert('Cannot delete global chat');if(state.roomOwners[r]!==state.profile.name&&state.userId!==state.superOwnerId)return alert('No permission');if(!confirm('Delete room?'))return;delete state.rooms[r];delete state.roomOwners[r];delete state.roomPrivacy[r];state.currentRoom='#global-ops';save();renderAll();}
+searchRooms.oninput=e=>renderRooms(e.target.value);
+
+document.getElementById('toggleConsole').onclick=()=>rightcol.classList.toggle('open');
+renderAll();
+</script>
+</body>
+</html>
