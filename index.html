@@ -1,234 +1,399 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Members</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GSEA KA SOHO</title>
+
 <style>
-  body {
-    font-family: "Inter", sans-serif;
-    background: #f4f7fb;
-    margin: 0;
-    padding: 2rem;
-    color: #1a1a1a;
-  }
+:root {
+  --accent-blue: #1f6feb;
+  --accent-gold: #fbbf24;
+  --muted: #6b7280;
+  --bg: #f3f7ff;
+  --panel: #fff;
+  --radius: 14px;
+  --max-width: 1100px;
+}
 
-  h2 {
-    font-size: 1.6rem;
-    border-left: 5px solid #1f6feb;
-    padding-left: 10px;
-    margin-bottom: 1rem;
-  }
+body {
+  font-family: Inter, system-ui, sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: #04172a;
+}
 
-  .members {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1.5rem;
-    justify-items: center;
-  }
+/* Header */
+header {
+  background: var(--panel);
+  border-bottom: 1px solid #e5e7eb;
+  padding: 14px 20px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 18px;
+}
 
-  /* Louis (Creator) */
-  .member.developer {
-    grid-column: span 2;
-    background: white;
-    border-radius: 1rem;
-    padding: 1.2rem;
-    text-align: center;
-    box-shadow: 0 0 25px rgba(0, 132, 255, 0.2);
-    transition: all 0.3s ease;
-    position: relative;
-  }
+/* Layout */
+main {
+  max-width: var(--max-width);
+  margin: 30px auto 80px;
+  padding: 0 20px;
+}
 
-  .member.developer .avatar-wrap {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    margin: 0 auto 1rem;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+h2 {
+  margin-top: 40px;
+  margin-bottom: 15px;
+  font-size: 20px;
+  border-left: 5px solid var(--accent-blue);
+  padding-left: 10px;
+}
 
-  .member.developer .avatar-wrap::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    padding: 2px;
-    background: conic-gradient(from 0deg, #1f6feb, #00bcd4, #ffffff, #1f6feb);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: breathe 4s ease-in-out infinite;
-  }
+/* Search bar */
+.search-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.search {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  outline: none;
+}
 
-  .member.developer img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    position: relative;
-    z-index: 2;
-  }
+/* Profile grid */
+.profiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+  justify-items: center;
+}
 
-  .member.developer h3 {
-    margin: 0.3rem 0 0.5rem;
-  }
+/* === UNIVERSAL MEMBER STYLE === */
+.member {
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: float 4s ease-in-out infinite;
+}
 
-  .badge {
-    display: inline-block;
-    background: linear-gradient(90deg, #1f6feb, #f1c40f);
-    color: #fff;
-    padding: 0.35rem 0.8rem;
-    border-radius: 2rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-  }
+.member:hover {
+  transform: translateY(-5px);
+}
 
-  .badge::before {
-    content: "⭐";
-  }
+.avatar-wrap {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 8px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  @keyframes breathe {
-    0%, 100% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.05); filter: brightness(1.2); }
-  }
+.avatar-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: conic-gradient(#ff0080, #7928ca, #2af598, #ff0080);
+  animation: spin 8s linear infinite;
+  z-index: 0;
+}
 
-  /* General Members */
-  .member {
-    text-align: center;
-  }
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
 
-  .member .avatar-wrap {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    animation: floatLive 5s ease-in-out infinite;
-  }
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
 
-  .member .avatar-wrap::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    padding: 2px;
-    background: conic-gradient(from 0deg, var(--ring-color1), var(--ring-color2), var(--ring-color3));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    z-index: 1;
-  }
+.member:hover .avatar img {
+  transform: scale(1.05);
+}
 
-  .member img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    position: relative;
-    z-index: 2;
-  }
+/* Always glowing for all */
+.member {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+.member .avatar-wrap::before {
+  opacity: 0.9;
+}
+.member:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
 
-  .member h3 {
-    margin-top: 0.6rem;
-    font-size: 1rem;
-    font-weight: 600;
-  }
+/* Text */
+.member-name {
+  display: block;
+  font-weight: 700;
+  color: #04172a;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.member-role {
+  font-size: 12px;
+  color: var(--muted);
+}
 
-  @keyframes floatLive {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
-  }
+/* === ADMINS === */
+.admin .avatar-wrap::before {
+  background: conic-gradient(var(--accent-gold), #f97316, var(--accent-gold));
+}
 
-  /* Individual color themes for members */
-  .member.orange .avatar-wrap::before {
-    --ring-color1: #ff9900;
-    --ring-color2: #ffcc33;
-    --ring-color3: #ff9900;
-  }
+/* === DEVELOPER (LOUIS) === */
+.member.developer {
+  --ring-color: #1f6feb;
+  background: linear-gradient(145deg, #ffffff, #f0f5ff);
+  border: 2px solid rgba(31, 111, 235, 0.2);
+  border-radius: 20px;
+  padding: 16px 10px 10px;
+  position: relative;
+  box-shadow: 0 6px 16px rgba(31, 111, 235, 0.15);
+  transition: all 0.4s ease;
+  animation: floatPremium 5s ease-in-out infinite;
+}
 
-  .member.pink .avatar-wrap::before {
-    --ring-color1: #ff4da6;
-    --ring-color2: #ff99cc;
-    --ring-color3: #ff4da6;
-  }
+.member.developer .avatar-wrap {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+}
 
-  .member.purple .avatar-wrap::before {
-    --ring-color1: #9b4dff;
-    --ring-color2: #ff66cc;
-    --ring-color3: #00ffcc;
-  }
+.member.developer .avatar-wrap::before {
+  background: conic-gradient(#1f6feb, #00e5ff, #ffffff, #1f6feb);
+  animation: pulseGlow 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(31, 111, 235, 0.5));
+  inset: -1.5px;
+}
+
+.member.developer .avatar img {
+  border: 1.5px solid rgba(31, 111, 235, 0.3);
+  border-radius: 999px;
+}
+
+.member.developer .member-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1f3c88;
+  letter-spacing: 0.3px;
+}
+
+.member.developer .member-role {
+  display: none;
+}
+
+/* Star badge */
+.member.developer::after {
+  content: "⭐ Creator · Developer";
+  display: inline-block;
+  font-size: 11px;
+  color: white;
+  background: linear-gradient(90deg, #1f6feb, #00c6ff);
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-top: 6px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* === Animations === */
+@keyframes spin {
+  0% { transform: rotate(0); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes floatPremium {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Footer */
+footer {
+  background: var(--panel);
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 60px;
+  border-top: 1px solid #e5e7eb;
+}
+footer p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0;
+}
 </style>
 </head>
 
 <body>
-  <h2>Members</h2>
-  <div class="members">
-    <div class="member developer">
-      <div class="avatar-wrap">
-        <img src="https://scontent.fceb2-1.fna.fbcdn.net/v/t39.30808-1/558004238_122144080298877366_996476971602138648_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeHv0I9btWxHUpCOKiei7QFiOXIKviDWjaU5cgq-INaNpSd2B1beOOlm5VyTLKBUQgqOpl9UW402qnxdfJwgU3Ri&_nc_ohc=SKZPpm7TaH0Q7kNvwEfO2UQ&_nc_oc=AdkqzPCjRGCSRZTlInvvyewFOyUBvIvUO0sOfZU2VQLZQ-7ozfyQFXSWevl9H9Z5sEk&_nc_zt=24&_nc_ht=scontent.fceb2-1.fna&_nc_gid=E6QYxPYRMVC0_k9VlM7tlw&oh=00_AfcrvtsJsxXdIRpP5yUMTITgxu5V_ngjxincyDSIp3I71A&oe=68E9AE73" alt="Louis" />
-      </div>
-      <h3>Louís</h3>
-      <div class="badge">Creator · Developer</div>
-    </div>
 
-    <div class="member orange">
-      <div class="avatar-wrap">
-        <img src="raeli.jpg" alt="Raeli">
-      </div>
-      <h3>Raeli</h3>
-    </div>
+<header>GSEA KA SOHO</header>
 
-    <div class="member orange">
-      <div class="avatar-wrap">
-        <img src="soya.jpg" alt="Soya">
-      </div>
-      <h3>Soya</h3>
-    </div>
-
-    <div class="member purple">
-      <div class="avatar-wrap">
-        <img src="sam.jpg" alt="Sam">
-      </div>
-      <h3>Sam</h3>
-    </div>
-
-    <div class="member purple">
-      <div class="avatar-wrap">
-        <img src="adiya.jpg" alt="Adiya">
-      </div>
-      <h3>Adiya</h3>
-    </div>
-
-    <div class="member pink">
-      <div class="avatar-wrap">
-        <img src="zhianna.jpg" alt="Zhianna">
-      </div>
-      <h3>Zhianna</h3>
-    </div>
-
-    <div class="member pink">
-      <div class="avatar-wrap">
-        <img src="jzer.jpg" alt="Jzer">
-      </div>
-      <h3>Jzer</h3>
-    </div>
-
-    <div class="member pink">
-      <div class="avatar-wrap">
-        <img src="lance.jpg" alt="Lance">
-      </div>
-      <h3>Lance</h3>
-    </div>
+<main>
+  <div class="search-row">
+    <input id="search" class="search" type="search" placeholder="Search names...">
   </div>
+
+  <h2>Admins</h2>
+  <section class="profiles">
+    <!-- Admins -->
+    <a href="https://www.facebook.com/share/1QuBKFiXPq/" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/1200x/d2/a6/6e/d2a66e720484d5a6b8ae6113087a48df.jpg">
+      </div></div>
+      <span class="member-name">Perdita</span>
+    </a>
+
+    <a href="https://www.facebook.com/share/1FzrUVWkpz/" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/03/5d/ab/035dab773f7a307f8252b95916d9ae26.jpg">
+      </div></div>
+      <span class="member-name">Adsila</span>
+    </a>
+
+    <a href="https://www.facebook.com/share/175iBFGrip/" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/3d/d0/3e/3dd03ea7d8fe4b6dea877bb04bbabf97.jpg">
+      </div></div>
+      <span class="member-name">Aereia</span>
+    </a>
+
+    <a href="https://web.facebook.com/kehloshi0" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/92/50/d2/9250d2f58b48d1130f1aa25b6c6cf9de.jpg">
+      </div></div>
+      <span class="member-name">Fawn</span>
+    </a>
+
+    <a href="https://www.facebook.com/share/1BU34eYZd6/" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/1c/be/c9/1cbec934dd199540d2a556f1a2445ba4.jpg">
+      </div></div>
+      <span class="member-name">Longganisa</span>
+    </a>
+
+    <a href="https://web.facebook.com/neuraforia" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/d0/7e/80/d07e809c14e5e0f1e692843df71b6367.jpg">
+      </div></div>
+      <span class="member-name">Neura</span>
+    </a>
+
+    <a href="https://web.facebook.com/nezlec" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/59/7c/df/597cdfc384a042b499adac3a90393024.jpg">
+      </div></div>
+      <span class="member-name">Nezadie</span>
+    </a>
+
+    <a href="https://web.facebook.com/profile.php?id=61573004891638" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/38/64/58/3864582b198937fe2f7707d49f62674f.jpg">
+      </div></div>
+      <span class="member-name">Owen</span>
+    </a>
+
+    <a href="https://web.facebook.com/profile.php?id=100066685080166" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/bd/9c/26/bd9c26bc3eeb9eabecfde4f677527780.jpg">
+      </div></div>
+      <span class="member-name">Raeli</span>
+    </a>
+
+    <a href="https://web.facebook.com/profile.php?id=61579160990581" target="_blank" class="member admin">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/05/9a/4f/059a4faf112edfa6fe17c68317c08da3.jpg">
+      </div></div>
+      <span class="member-name">Soya</span>
+    </a>
+  </section>
+
+  <h2>Members</h2>
+  <section class="profiles">
+    <!-- Louis (Developer / Creator) -->
+    <a href="https://web.facebook.com/lx.ryc/" target="_blank" class="member developer louis">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://scontent.fceb2-1.fna.fbcdn.net/v/t39.30808-1/558004238_122144080298877366_996476971602138648_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeHv0I9btWxHUpCOKiei7QFiOXIKviDWjaU5cgq-INaNpSd2B1beOOlm5VyTLKBUQgqOpl9UW402qnxdfJwgU3Ri&_nc_ohc=SKZPpm7TaH0Q7kNvwEfO2UQ&_nc_oc=AdkqzPCjRGCSRZTlInvvyewFOyUBvIvUO0sOfZU2VQLZQ-7ozfyQFXSWevl9H9Z5sEk&_nc_zt=24&_nc_ht=scontent.fceb2-1.fna&_nc_gid=E6QYxPYRMVC0_k9VlM7tlw&oh=00_AfcrvtsJsxXdIRpP5yUMTITgxu5V_ngjxincyDSIp3I71A&oe=68E9AE73">
+      </div></div>
+      <span class="member-name">Louís</span>
+    </a>
+
+    <a href="https://web.facebook.com/sam.yvanne.75436531" target="_blank" class="member">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/1200x/65/48/9c/65489cc392ea91ae5a2d92b7f61ba4ab.jpg">
+      </div></div>
+      <span class="member-name">Sam</span>
+    </a>
+
+    <a href="https://web.facebook.com/nahvirnya" target="_blank" class="member">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/cf/a8/c9/cfa8c91ac3b8cfa7baf3113a232b1b6c.jpg">
+      </div></div>
+      <span class="member-name">Adiya</span>
+    </a>
+
+    <a href="https://web.facebook.com/Zhian.vera" target="_blank" class="member">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/2a/63/eb/2a63ebab51f4cdb457cf2d53e3da01d7.jpg">
+      </div></div>
+      <span class="member-name">Zhianna</span>
+    </a>
+
+    <a href="https://web.facebook.com/profile.php?id=61580279987016" target="_blank" class="member">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/736x/ad/8a/cd/ad8acde48d77ae3e5a568a0af68a6559.jpg">
+      </div></div>
+      <span class="member-name">Jzer</span>
+    </a>
+
+    <a href="https://web.facebook.com/S4ndwichh" target="_blank" class="member">
+      <div class="avatar-wrap"><div class="avatar">
+        <img src="https://i.pinimg.com/1200x/12/5b/19/125b1912926ce2ecda19be6f77d685c3.jpg">
+      </div></div>
+      <span class="member-name">Lance</span>
+    </a>
+  </section>
+</main>
+
+<footer>
+  <p>© 2025 GSEA KA SOHO — All rights reserved.</p>
+</footer>
+
+<script>
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('.member').forEach(m => {
+    const name = m.querySelector('.member-name').textContent.toLowerCase();
+    m.style.display = name.includes(q) ? '' : 'none';
+  });
+});
+</script>
+
 </body>
 </html>
