@@ -1,366 +1,167 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GSEA KA SOHO</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Showcase</title>
 <style>
-:root {
-  --accent-blue: #1f6feb;
-  --accent-gold: #fbbf24;
-  --muted: #6b7280;
-  --bg: #f3f7ff;
-  --panel: #fff;
-  --radius: 14px;
-  --max-width: 1100px;
-}
+  body {
+    font-family: "Poppins", sans-serif;
+    background: #f6f8fc;
+    margin: 0;
+    padding: 0;
+  }
 
-body {
-  font-family: Inter, system-ui, sans-serif;
-  margin: 0;
-  background: var(--bg);
-  color: #04172a;
-}
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #2979ff;
+    padding-left: 8px;
+    color: #222;
+  }
 
-/* Header */
-header {
-  background: var(--panel);
-  border-bottom: 1px solid #e5e7eb;
-  padding: 14px 20px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 18px;
-}
+  .section {
+    margin: 40px auto;
+    max-width: 900px;
+    padding: 0 20px;
+  }
 
-/* Layout */
-main {
-  max-width: var(--max-width);
-  margin: 30px auto 80px;
-  padding: 0 20px;
-}
+  .profiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 30px;
+    justify-items: center;
+  }
 
-h2 {
-  margin-top: 40px;
-  margin-bottom: 15px;
-  font-size: 20px;
-  border-left: 5px solid var(--accent-blue);
-  padding-left: 10px;
-}
+  .profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
 
-/* Search bar */
-.search-row {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-.search {
-  width: 100%;
-  max-width: 400px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-  outline: none;
-}
+  .profile img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid transparent;
+    background: linear-gradient(145deg, #cfcfcf, #f0f0f0);
+    background-clip: padding-box;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.4s ease;
+    animation: floatAura 6s ease-in-out infinite;
+  }
 
-/* Profile grid */
-.profiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 25px;
-  margin-bottom: 40px;
-  justify-items: center;
-}
+  .profile:hover img {
+    transform: scale(1.05);
+  }
 
-/* === UNIVERSAL MEMBER STYLE === */
-.member {
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  animation: float 4s ease-in-out infinite;
-}
+  .profile h3 {
+    margin: 12px 0 4px;
+    font-size: 1rem;
+    color: #111;
+  }
 
-.member:hover {
-  transform: translateY(-5px);
-}
+  /* Louis special card */
+  .louis-card {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    padding: 20px 25px;
+    border-radius: 20px;
+    box-shadow: 0 6px 25px rgba(41, 121, 255, 0.25);
+    animation: louisAura 6s ease-in-out infinite;
+  }
 
-.avatar-wrap {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin: 0 auto 8px;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .louis-card img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: none;
+    box-shadow: none;
+  }
 
-.avatar-wrap::before {
-  content: "";
-  position: absolute;
-  inset: -1.2px;
-  border-radius: 50%;
-  background: conic-gradient(#b0b0b0, #e0e0e0, #c0c0c0, #b0b0b0);
-  z-index: 0;
-  animation: spin 10s linear infinite;
-}
+  .badge {
+    margin-top: 12px;
+    background: linear-gradient(to right, #2979ff, #00c3ff);
+    color: white;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-.avatar {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-}
+  .badge span {
+    font-size: 1rem;
+  }
 
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
+  /* Animations */
+  @keyframes floatAura {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
 
-.member:hover .avatar img {
-  transform: scale(1.05);
-}
-
-/* Always glowing for all */
-.member {
-  box-shadow: none;
-}
-.member .avatar-wrap::before {
-  opacity: 0.8;
-}
-
-/* Text */
-.member-name {
-  display: block;
-  font-weight: 700;
-  color: #04172a;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-.member-role {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* === ADMINS === */
-.admin .avatar-wrap::before {
-  background: conic-gradient(#b0b0b0, #d1d1d1, #bdbdbd, #b0b0b0);
-}
-
-/* === DEVELOPER (LOUIS) === */
-.member.developer {
-  --ring-color: #1f6feb;
-  background: linear-gradient(145deg, #ffffff, #f0f5ff);
-  border: 2px solid rgba(31, 111, 235, 0.2);
-  border-radius: 20px;
-  padding: 16px 10px 10px;
-  position: relative;
-  box-shadow: 0 6px 16px rgba(31, 111, 235, 0.15);
-  transition: all 0.4s ease;
-  animation: floatPremium 5s ease-in-out infinite;
-}
-
-.member.developer .avatar-wrap {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-}
-
-.member.developer .avatar-wrap::before {
-  background: conic-gradient(#1f6feb, #00e5ff, #ffffff, #1f6feb);
-  animation: pulseGlow 4s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(31, 111, 235, 0.5));
-  inset: -1.5px;
-}
-
-.member.developer .avatar img {
-  border: 1.5px solid rgba(31, 111, 235, 0.3);
-  border-radius: 999px;
-}
-
-.member.developer .member-name {
-  font-size: 15px;
-  font-weight: 800;
-  color: #1f3c88;
-  letter-spacing: 0.3px;
-}
-
-.member.developer .member-role {
-  display: none;
-}
-
-/* Star badge */
-.member.developer::after {
-  content: "⭐ Creator · Developer";
-  display: inline-block;
-  font-size: 11px;
-  color: white;
-  background: linear-gradient(90deg, #1f6feb, #00c6ff);
-  padding: 3px 8px;
-  border-radius: 999px;
-  margin-top: 6px;
-  letter-spacing: 0.3px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-/* === Animations === */
-@keyframes spin {
-  0% { transform: rotate(0); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes pulseGlow {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.8; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-@keyframes floatPremium {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-/* Footer */
-footer {
-  background: var(--panel);
-  text-align: center;
-  padding: 20px 0;
-  margin-top: 60px;
-  border-top: 1px solid #e5e7eb;
-}
-footer p {
-  color: var(--muted);
-  font-size: 14px;
-  margin: 0;
-}
+  @keyframes louisAura {
+    0% { box-shadow: 0 6px 25px rgba(41, 121, 255, 0.25); }
+    50% { box-shadow: 0 8px 30px rgba(0, 195, 255, 0.4); }
+    100% { box-shadow: 0 6px 25px rgba(41, 121, 255, 0.25); }
+  }
 </style>
 </head>
 
 <body>
 
-<header>GSEA KA SOHO</header>
-
-<main>
-  <div class="search-row">
-    <input id="search" class="search" type="search" placeholder="Search names...">
+  <div class="section">
+    <h2>Admins</h2>
+    <div class="profiles">
+      <div class="profile">
+        <img src="https://i.imgur.com/YOURIMAGE1.jpg" alt="Raeli">
+        <h3>Raeli</h3>
+      </div>
+      <div class="profile">
+        <img src="https://i.imgur.com/YOURIMAGE2.jpg" alt="Soya">
+        <h3>Soya</h3>
+      </div>
+    </div>
   </div>
 
-  <h2>Admins</h2>
-  <section class="profiles">
-    <a href="#" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/1200x/d2/a6/6e/d2a66e720484d5a6b8ae6113087a48df.jpg">
-      </div></div>
-      <span class="member-name">Perdita</span>
-    </a>
+  <div class="section">
+    <h2>Members</h2>
+    <div class="profiles">
+      <div class="louis-card">
+        <img src="https://scontent.fceb2-1.fna.fbcdn.net/v/t39.30808-1/558004238_122144080298877366_996476971602138648_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeHv0I9btWxHUpCOKiei7QFiOXIKviDWjaU5cgq-INaNpSd2B1beOOlm5VyTLKBUQgqOpl9UW402qnxdfJwgU3Ri&_nc_ohc=SKZPpm7TaH0Q7kNvwEfO2UQ&_nc_oc=AdkqzPCjRGCSRZTlInvvyewFOyUBvIvUO0sOfZU2VQLZQ-7ozfyQFXSWevl9H9Z5sEk&_nc_zt=24&_nc_ht=scontent.fceb2-1.fna&_nc_gid=E6QYxPYRMVC0_k9VlM7tlw&oh=00_AfcrvtsJsxXdIRpP5yUMTITgxu5V_ngjxincyDSIp3I71A&oe=68E9AE73" alt="Louis">
+        <h3>Louís</h3>
+        <div class="badge"><span>⭐</span> Creator · Developer</div>
+      </div>
 
-    <a href="#" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/03/5d/ab/035dab773f7a307f8252b95916d9ae26.jpg">
-      </div></div>
-      <span class="member-name">Adsila</span>
-    </a>
-
-    <a href="#" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/3d/d0/3e/3dd03ea7d8fe4b6dea877bb04bbabf97.jpg">
-      </div></div>
-      <span class="member-name">Aereia</span>
-    </a>
-
-    <a href="#" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/92/50/d2/9250d2f58b48d1130f1aa25b6c6cf9de.jpg">
-      </div></div>
-      <span class="member-name">Fawn</span>
-    </a>
-
-    <a href="#" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/1c/be/c9/1cbec934dd199540d2a556f1a2445ba4.jpg">
-      </div></div>
-      <span class="member-name">Longganisa</span>
-    </a>
-
-    <a href="#" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/d0/7e/80/d07e809c14e5e0f1e692843df71b6367.jpg">
-      </div></div>
-      <span class="member-name">Neura</span>
-    </a>
-  </section>
-
-  <h2>Members</h2>
-  <section class="profiles">
-    <a href="#" class="member developer louis">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://scontent.fceb2-1.fna.fbcdn.net/v/t39.30808-1/558004238_122144080298877366_996476971602138648_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeHv0I9btWxHUpCOKiei7QFiOXIKviDWjaU5cgq-INaNpSd2B1beOOlm5VyTLKBUQgqOpl9UW402qnxdfJwgU3Ri&_nc_ohc=SKZPpm7TaH0Q7kNvwEfO2UQ&_nc_oc=AdkqzPCjRGCSRZTlInvvyewFOyUBvIvUO0sOfZU2VQLZQ-7ozfyQFXSWevl9H9Z5sEk&_nc_zt=24&_nc_ht=scontent.fceb2-1.fna&_nc_gid=E6QYxPYRMVC0_k9VlM7tlw&oh=00_AfcrvtsJsxXdIRpP5yUMTITgxu5V_ngjxincyDSIp3I71A&oe=68E9AE73">
-      </div></div>
-      <span class="member-name">Louís</span>
-    </a>
-
-    <a href="#" class="member">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/1200x/65/48/9c/65489cc392ea91ae5a2d92b7f61ba4ab.jpg">
-      </div></div>
-      <span class="member-name">Sam</span>
-    </a>
-
-    <a href="#" class="member">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/cf/a8/c9/cfa8c91ac3b8cfa7baf3113a232b1b6c.jpg">
-      </div></div>
-      <span class="member-name">Adiya</span>
-    </a>
-
-    <a href="#" class="member">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/2a/63/eb/2a63ebab51f4cdb457cf2d53e3da01d7.jpg">
-      </div></div>
-      <span class="member-name">Zhianna</span>
-    </a>
-
-    <a href="#" class="member">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/ad/8a/cd/ad8acde48d77ae3e5a568a0af68a6559.jpg">
-      </div></div>
-      <span class="member-name">Jzer</span>
-    </a>
-
-    <a href="#" class="member">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/1200x/12/5b/19/125b1912926ce2ecda19be6f77d685c3.jpg">
-      </div></div>
-      <span class="member-name">Lance</span>
-    </a>
-  </section>
-</main>
-
-<footer>
-  <p>© 2025 GSEA KA SOHO — All rights reserved.</p>
-</footer>
-
-<script>
-const searchInput = document.getElementById('search');
-searchInput.addEventListener('input', e => {
-  const q = e.target.value.toLowerCase();
-  document.querySelectorAll('.member').forEach(m => {
-    const name = m.querySelector('.member-name').textContent.toLowerCase();
-    m.style.display = name.includes(q) ? '' : 'none';
-  });
-});
-</script>
+      <div class="profile">
+        <img src="https://i.imgur.com/YOURIMAGE3.jpg" alt="Sam">
+        <h3>Sam</h3>
+      </div>
+      <div class="profile">
+        <img src="https://i.imgur.com/YOURIMAGE4.jpg" alt="Adiya">
+        <h3>Adiya</h3>
+      </div>
+      <div class="profile">
+        <img src="https://i.imgur.com/YOURIMAGE5.jpg" alt="Zhianna">
+        <h3>Zhianna</h3>
+      </div>
+      <div class="profile">
+        <img src="https://i.imgur.com/YOURIMAGE6.jpg" alt="Jzer">
+        <h3>Jzer</h3>
+      </div>
+      <div class="profile">
+        <img src="https://i.imgur.com/YOURIMAGE7.jpg" alt="Lance">
+        <h3>Lance</h3>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
