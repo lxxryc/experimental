@@ -75,11 +75,15 @@ h2 {
   text-align: center;
   text-decoration: none;
   color: inherit;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  animation: float 4s ease-in-out infinite;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.member:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+
+@keyframes float {
+  0%, 100% { transform: translateY(-3px); }
+  50% { transform: translateY(-6px); }
 }
 
 .avatar-wrap {
@@ -97,8 +101,18 @@ h2 {
   inset: -3px;
   border-radius: 999px;
   background: conic-gradient(#ff0080, #7928ca, #2af598, #ff0080);
-  animation: spin 3s linear infinite;
+  animation: spin 6s linear infinite, glowPulse 3s ease-in-out infinite;
   z-index: 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(255,255,255,0.2)); }
+  50% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); }
 }
 
 .avatar {
@@ -137,12 +151,6 @@ h2 {
   color: #b45309;
 }
 
-/* Animation  */
-@keyframes spin {
-  0% { transform: rotate(0); }
-  100% { transform: rotate(360deg); }
-}
-
 /* Footer */
 footer {
   background: var(--panel);
@@ -166,25 +174,27 @@ footer p {
   border-radius: 18px;
   padding: 12px;
   position: relative;
-  box-shadow: 0 6px 16px rgba(31, 111, 235, 0.12);
-  transition: all 0.3s ease;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 22px rgba(31, 111, 235, 0.25);
+  animation: floatDeveloper 5s ease-in-out infinite;
 }
 
-.member.developer:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 25px rgba(31, 111, 235, 0.25);
+/* Floating animation for developer (stronger presence) */
+@keyframes floatDeveloper {
+  0%, 100% { transform: translateY(-5px); box-shadow: 0 8px 22px rgba(31, 111, 235, 0.25); }
+  50% { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(31, 111, 235, 0.35); }
 }
 
 /* Custom glowing ring for the developer */
 .member.developer .avatar-wrap::before {
-  background: conic-gradient(
-    var(--ring-color),
-    gold,
-    var(--ring-color),
-    gold
-  );
-  animation: spin 4s linear infinite;
+  background: conic-gradient(var(--ring-color), gold, var(--ring-color), gold);
+  animation: spin 4s linear infinite, glowPulseDev 3s ease-in-out infinite;
   filter: drop-shadow(0 0 8px rgba(31, 111, 235, 0.5));
+}
+
+@keyframes glowPulseDev {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(31,111,235,0.3)); }
+  50% { filter: drop-shadow(0 0 14px rgba(31,111,235,0.6)); }
 }
 
 /* Avatar subtle inner border */
@@ -234,7 +244,6 @@ footer p {
 
   <h2>Admins</h2>
   <section class="profiles">
-    <!-- Admin Profiles -->
     <a href="https://www.facebook.com/share/1QuBKFiXPq/" target="_blank" class="member admin">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/1200x/d2/a6/6e/d2a66e720484d5a6b8ae6113087a48df.jpg">
