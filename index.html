@@ -101,11 +101,11 @@ h2 {
 .avatar-wrap::before {
   content: "";
   position: absolute;
-  inset: -2px;
+  inset: -1.2px;
   border-radius: 50%;
-  background: conic-gradient(#ff0080, #7928ca, #2af598, #ff0080);
-  animation: spin 8s linear infinite;
+  background: conic-gradient(#b0b0b0, #e0e0e0, #c0c0c0, #b0b0b0);
   z-index: 0;
+  animation: spin 10s linear infinite;
 }
 
 .avatar {
@@ -130,13 +130,10 @@ h2 {
 
 /* Always glowing for all */
 .member {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
 }
 .member .avatar-wrap::before {
-  opacity: 0.9;
-}
-.member:hover {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  opacity: 0.8;
 }
 
 /* Text */
@@ -154,7 +151,7 @@ h2 {
 
 /* === ADMINS === */
 .admin .avatar-wrap::before {
-  background: conic-gradient(var(--accent-gold), #f97316, var(--accent-gold));
+  background: conic-gradient(#b0b0b0, #d1d1d1, #bdbdbd, #b0b0b0);
 }
 
 /* === DEVELOPER (LOUIS) === */
@@ -261,117 +258,87 @@ footer p {
 
   <h2>Admins</h2>
   <section class="profiles">
-    <!-- Admins -->
-    <a href="https://www.facebook.com/share/1QuBKFiXPq/" target="_blank" class="member admin">
+    <a href="#" class="member admin">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/1200x/d2/a6/6e/d2a66e720484d5a6b8ae6113087a48df.jpg">
       </div></div>
       <span class="member-name">Perdita</span>
     </a>
 
-    <a href="https://www.facebook.com/share/1FzrUVWkpz/" target="_blank" class="member admin">
+    <a href="#" class="member admin">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/736x/03/5d/ab/035dab773f7a307f8252b95916d9ae26.jpg">
       </div></div>
       <span class="member-name">Adsila</span>
     </a>
 
-    <a href="https://www.facebook.com/share/175iBFGrip/" target="_blank" class="member admin">
+    <a href="#" class="member admin">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/736x/3d/d0/3e/3dd03ea7d8fe4b6dea877bb04bbabf97.jpg">
       </div></div>
       <span class="member-name">Aereia</span>
     </a>
 
-    <a href="https://web.facebook.com/kehloshi0" target="_blank" class="member admin">
+    <a href="#" class="member admin">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/736x/92/50/d2/9250d2f58b48d1130f1aa25b6c6cf9de.jpg">
       </div></div>
       <span class="member-name">Fawn</span>
     </a>
 
-    <a href="https://www.facebook.com/share/1BU34eYZd6/" target="_blank" class="member admin">
+    <a href="#" class="member admin">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/736x/1c/be/c9/1cbec934dd199540d2a556f1a2445ba4.jpg">
       </div></div>
       <span class="member-name">Longganisa</span>
     </a>
 
-    <a href="https://web.facebook.com/neuraforia" target="_blank" class="member admin">
+    <a href="#" class="member admin">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/736x/d0/7e/80/d07e809c14e5e0f1e692843df71b6367.jpg">
       </div></div>
       <span class="member-name">Neura</span>
     </a>
-
-    <a href="https://web.facebook.com/nezlec" target="_blank" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/59/7c/df/597cdfc384a042b499adac3a90393024.jpg">
-      </div></div>
-      <span class="member-name">Nezadie</span>
-    </a>
-
-    <a href="https://web.facebook.com/profile.php?id=61573004891638" target="_blank" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/38/64/58/3864582b198937fe2f7707d49f62674f.jpg">
-      </div></div>
-      <span class="member-name">Owen</span>
-    </a>
-
-    <a href="https://web.facebook.com/profile.php?id=100066685080166" target="_blank" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/bd/9c/26/bd9c26bc3eeb9eabecfde4f677527780.jpg">
-      </div></div>
-      <span class="member-name">Raeli</span>
-    </a>
-
-    <a href="https://web.facebook.com/profile.php?id=61579160990581" target="_blank" class="member admin">
-      <div class="avatar-wrap"><div class="avatar">
-        <img src="https://i.pinimg.com/736x/05/9a/4f/059a4faf112edfa6fe17c68317c08da3.jpg">
-      </div></div>
-      <span class="member-name">Soya</span>
-    </a>
   </section>
 
   <h2>Members</h2>
   <section class="profiles">
-    <!-- Louis (Developer / Creator) -->
-    <a href="https://web.facebook.com/lx.ryc/" target="_blank" class="member developer louis">
+    <a href="#" class="member developer louis">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://scontent.fceb2-1.fna.fbcdn.net/v/t39.30808-1/558004238_122144080298877366_996476971602138648_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=108&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeHv0I9btWxHUpCOKiei7QFiOXIKviDWjaU5cgq-INaNpSd2B1beOOlm5VyTLKBUQgqOpl9UW402qnxdfJwgU3Ri&_nc_ohc=SKZPpm7TaH0Q7kNvwEfO2UQ&_nc_oc=AdkqzPCjRGCSRZTlInvvyewFOyUBvIvUO0sOfZU2VQLZQ-7ozfyQFXSWevl9H9Z5sEk&_nc_zt=24&_nc_ht=scontent.fceb2-1.fna&_nc_gid=E6QYxPYRMVC0_k9VlM7tlw&oh=00_AfcrvtsJsxXdIRpP5yUMTITgxu5V_ngjxincyDSIp3I71A&oe=68E9AE73">
       </div></div>
       <span class="member-name">Louís</span>
     </a>
 
-    <a href="https://web.facebook.com/sam.yvanne.75436531" target="_blank" class="member">
+    <a href="#" class="member">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/1200x/65/48/9c/65489cc392ea91ae5a2d92b7f61ba4ab.jpg">
       </div></div>
       <span class="member-name">Sam</span>
     </a>
 
-    <a href="https://web.facebook.com/nahvirnya" target="_blank" class="member">
+    <a href="#" class="member">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/736x/cf/a8/c9/cfa8c91ac3b8cfa7baf3113a232b1b6c.jpg">
       </div></div>
       <span class="member-name">Adiya</span>
     </a>
 
-    <a href="https://web.facebook.com/Zhian.vera" target="_blank" class="member">
+    <a href="#" class="member">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/736x/2a/63/eb/2a63ebab51f4cdb457cf2d53e3da01d7.jpg">
       </div></div>
       <span class="member-name">Zhianna</span>
     </a>
 
-    <a href="https://web.facebook.com/profile.php?id=61580279987016" target="_blank" class="member">
+    <a href="#" class="member">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/736x/ad/8a/cd/ad8acde48d77ae3e5a568a0af68a6559.jpg">
       </div></div>
       <span class="member-name">Jzer</span>
     </a>
 
-    <a href="https://web.facebook.com/S4ndwichh" target="_blank" class="member">
+    <a href="#" class="member">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://i.pinimg.com/1200x/12/5b/19/125b1912926ce2ecda19be6f77d685c3.jpg">
       </div></div>
