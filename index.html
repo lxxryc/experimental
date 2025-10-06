@@ -75,6 +75,11 @@ h2 {
   text-align: center;
   text-decoration: none;
   color: inherit;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.member:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .avatar-wrap {
@@ -150,6 +155,70 @@ footer p {
   color: var(--muted);
   font-size: 14px;
   margin: 0;
+}
+
+/* ========== DEVELOPER (LOUÍS) SPECIAL DESIGN ========== */
+
+.member.developer {
+  --ring-color: #1f6feb;
+  background: linear-gradient(145deg, #ffffff, #f0f5ff);
+  border: 2px solid rgba(31, 111, 235, 0.15);
+  border-radius: 18px;
+  padding: 12px;
+  position: relative;
+  box-shadow: 0 6px 16px rgba(31, 111, 235, 0.12);
+  transition: all 0.3s ease;
+}
+
+.member.developer:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(31, 111, 235, 0.25);
+}
+
+/* Custom glowing ring for the developer */
+.member.developer .avatar-wrap::before {
+  background: conic-gradient(
+    var(--ring-color),
+    gold,
+    var(--ring-color),
+    gold
+  );
+  animation: spin 4s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(31, 111, 235, 0.5));
+}
+
+/* Avatar subtle inner border */
+.member.developer .avatar img {
+  border: 2px solid rgba(31, 111, 235, 0.3);
+  border-radius: 999px;
+}
+
+/* Developer name and role */
+.member.developer .member-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1f3c88;
+  letter-spacing: 0.3px;
+}
+
+.member.developer .member-role {
+  color: #555;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* Add a badge below */
+.member.developer::after {
+  content: "⭐ Creator · Developer";
+  display: inline-block;
+  font-size: 11px;
+  color: white;
+  background: linear-gradient(90deg, #1f6feb, #fbbf24);
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-top: 6px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 </style>
 </head>
@@ -239,12 +308,13 @@ footer p {
 
   <h2>Members</h2>
   <section class="profiles">
-    <!-- Member Profiles -->
-    <a href="https://web.facebook.com/lx.ryc/" target="_blank" class="member">
+    <!-- Louis (Developer / Creator) -->
+    <a href="https://web.facebook.com/lx.ryc/" target="_blank" class="member developer louis">
       <div class="avatar-wrap"><div class="avatar">
         <img src="https://scontent.fceb2-1.fna.fbcdn.net/v/t39.30808-1/558004238_122144080298877366_996476971602138648_n.jpg?_nc_cat=108&_nc_ht=scontent.fceb2-1.fna">
       </div></div>
       <span class="member-name">Louís</span>
+      <div class="member-role">Creator · Developer</div>
     </a>
 
     <a href="https://web.facebook.com/sam.yvanne.75436531" target="_blank" class="member">
