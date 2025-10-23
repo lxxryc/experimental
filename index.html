@@ -5,15 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <style>
 * {
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
-*:active, *:focus {
-  outline: none !important;
-  box-shadow: none !important;
-}
+*:active, *:focus { outline: none !important; box-shadow: none !important; }
 
 html, body {
   user-select: none;
@@ -46,60 +42,52 @@ body {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0,0,0,0.65);
   z-index: -1;
 }
 
-h1 {
-  font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+/* Headings smaller + clean */
+h1, h2, h4 {
   color: #00ffc6;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   text-shadow: 0 0 8px #00ffc6;
-  margin: 1rem 0;
-  width: 100%;
-  max-width: 800px;
-  margin-left: 3vw;
-  letter-spacing: 1px;
 }
+h2 { font-size: clamp(0.95rem, 1.8vw, 1.15rem); }
+h4 { font-size: clamp(1rem, 1.9vw, 1.2rem); margin-bottom: 0.6rem; }
 
 .info-note, .winner-box {
   width: 100%;
   max-width: 700px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent !important;
+  border: none !important;
   border-radius: 12px;
   padding: 1rem;
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  box-shadow: 0 0 8px rgba(0,255,200,0.1);
   margin: 0 auto 1rem auto;
   font-size: clamp(0.7rem, 1.6vw, 0.85rem);
   overflow-y: auto;
+  box-shadow: none !important;
 }
 
+/* Winner boxes sizing */
 .winner-box {
   height: clamp(220px, 40vh, 300px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-.info-note h2,
-.purpose h2 {
-  color: #00ffc6;
-  font-weight: 600;
-  font-size: clamp(1rem, 2vw, 1.3rem);
-  margin-top: 1rem;
+/* Authenticity +10% height */
+.winner-box:nth-of-type(3) {
+  height: calc(clamp(220px, 40vh, 300px) * 1.1);
 }
 
 .info-note ul {
   list-style: none;
   padding-left: 0;
   line-height: 1.3;
+  text-align: justify;
 }
-
-.info-note li {
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
+.info-note li { margin-bottom: 0.5rem; font-weight: 500; }
 
 .winners-container {
   display: flex;
@@ -109,8 +97,8 @@ h1 {
 
 .winner-card {
   width: 100%;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(0,255,198,0.2);
+  background: transparent !important;
+  border: 1px solid rgba(0,255,198,0.25);
   border-radius: 10px;
   padding: 0.6rem 0.8rem;
   display: flex;
@@ -118,7 +106,6 @@ h1 {
   align-items: flex-start;
   gap: 0.4rem;
   word-break: break-word;
-  backdrop-filter: blur(8px);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
 }
@@ -138,16 +125,8 @@ h1 {
   font-size: clamp(0.9rem, 1.8vw, 1rem);
 }
 
-.winner-prize {
-  color: #fff;
-  font-weight: 500;
-}
-
-.winner-date {
-  font-size: clamp(0.7rem, 1.5vw, 0.8rem);
-  color: #ccc;
-  opacity: 0.85;
-}
+.winner-prize { color: #fff; font-weight: 500; }
+.winner-date { font-size: clamp(0.7rem, 1.5vw, 0.8rem); color: #ccc; opacity: 0.85; }
 
 #imgModal {
   display: none;
@@ -206,16 +185,12 @@ h1 {
   50% { transform: translate(-50%, -6px); }
 }
 
-/* 📱 Responsive refinements */
+/* Responsive Tweaks */
 @media (max-width: 768px) {
-  body { padding: 2vh 4vw 5vh; }
   .info-note, .winner-box { padding: 0.9rem; max-width: 90vw; }
   .winner-card img { max-height: 160px; }
 }
-
 @media (max-width: 480px) {
-  body { padding: 1.5vh 4vw; }
-  h1 { font-size: 1.2rem; margin-left: 10px; }
   .info-note, .winner-box { padding: 0.7rem; border-radius: 8px; }
   .winner-card { padding: 0.5rem; }
   .winner-card img { max-height: 140px; }
@@ -228,97 +203,78 @@ h1 {
 <img src="https://wallpapers.com/images/high/minecraft-phone-top-view-green-park-0hfmfnc5vdi5wms0.webp" class="bg-image" id="bgImage" />
 
 <div class="bg-overlay"></div>
-<div class="info-note" id="infoBox" style="position: relative; max-height: 250px; overflow-y: auto;">
-  <div><h2 class="mechanics">Mechanics</h2></div>
-  <ul style="text-align: justify; line-height: 1.2; margin-top: 10px;">
+
+<!-- INFO -->
+<div class="info-note" id="infoBox" style="position: relative; max-height: 250px;">
+  <h2>Mechanics</h2>
+  <ul style="margin-top: 10px;">
     <li>Select preferred reward: <strong>Load</strong> / <strong>GCash</strong>.</li>
     <li><strong>Submit your details.</strong></li>
     <li>Admin will put all submitted numbers into a <strong>random draw.</strong></li>
     <li>The number selected will be the winner.</li>
-    <li><strong style="color: darkorange;">Important</strong>: The prize is <strong>legit</strong> and will be sent safely. You just have to wait depending on the admin’s capacity at the time.</li>
-    <li><strong style="color: darkorange;">Important</strong>: Joining is <strong>completely voluntary</strong>.</li>
-    <li class="important-note"><strong style="color: darkorange;">Important:</strong> Kindly provide accurate contact information to ensure proper delivery of your reward. Sayang kay kung fake.<strong> G'luck!</strong></li>
+    <li><strong style="color: darkorange;">Important</strong>: The prize is legit and will be sent safely.</li>
+    <li><strong style="color: darkorange;">Important</strong>: Joining is voluntary.</li>
+    <li><strong style="color: darkorange;">Important:</strong> Provide accurate contact information to ensure delivery. <strong>G’luck!</strong></li>
   </ul>
+
   <div class="purpose">
-    <h2 class="">Purpose</h2>
+    <h2>Purpose</h2>
     <p style="line-height: 1.5; text-align: justify; margin-top: 10px;">
-      <strong><span style="color: #00ffc6;">Louís Ryc</span></strong>: I created this initiative to share a portion of my extra funds whenever available.
-      The main purpose is simple — to share whenever I can. I understand that the amount may be small; hence, I hope you’ll still appreciate it despite its simplicity.  
+      <strong><span style="color: #00ffc6;">Louís Ryc</span></strong>: I created this initiative to share extra funds whenever available.
+      The main purpose is simple — to share whenever I can. Even if the amount may be small, I hope you’ll appreciate it despite its simplicity.  
       <br><br>
-      <span style="color: #00ffc6;">For your assurance</span>, all personal information will remain completely <span>unknown</span> and will never be <span>misused</span>. 
-      Participation is completely <span>voluntary</span>. Even if my account appears inactive, all submissions are securely received and recorded, and the prize will be sent safely.  
+      <span style="color: #00ffc6;">For your assurance</span>: All personal info remains private and secure.  
+      Participation is voluntary. Even if my account seems inactive, submissions are received and processed safely.  
       <br><br>
-      Please pay attention to the details on the first page, especially if there’s a displayed <span style="color: lime;">value</span>.  
-      While the prize is legit, values may still vary; and if the value appears as pending or unavailable, then that’s it. If a countdown is displayed, it indicates something important — <span>so stay tuned!</span>
+      Watch for displayed <span style="color: lime;">values</span> or countdowns — they indicate something important!
     </p>
   </div>
   <div id="infoArrow" class="scroll-arrow">&darr;</div>
 </div>
-  <div class="section-divider"></div>
-  <div class="winner-box" style="position: relative;">
-    <h4 style="color: #00ffc6; font-size: 1.4rem; margin-bottom: 10px;">Winner</h4>
-    <div class="winners-container" id="winnersList" style="max-height: 250px; overflow-y: auto; cursor: pointer;">
-    </div>
-    <div id="winnerArrow" class="scroll-arrow">&darr;</div>
-  </div>
-  <div class="section-divider"></div>
-  <div class="winner-box" style="position: relative;">
-    <h4 style="color: #00ffc6; font-size: 1.4rem; margin-bottom: 10px;">Authenticity</h4>
-    <div class="winners-container" id="proofList" style="max-height: 250px; overflow-y: auto;">
-    </div>
-    <div id="proofArrow" class="scroll-arrow">&darr;</div>
-  </div>
-  <div id="imgModal">
-    <span id="closeModal">&times;</span>
-    <img id="modalImg" src="">
-  </div>
+
+<div class="section-divider"></div>
+
+<!-- WINNERS -->
+<div class="winner-box" style="position: relative;">
+  <h4>Winner</h4>
+  <div class="winners-container" id="winnersList" style="max-height: 250px; overflow-y: auto; cursor: pointer;"></div>
+  <div id="winnerArrow" class="scroll-arrow">&darr;</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- AUTHENTICITY -->
+<div class="winner-box" style="position: relative;">
+  <h4>Authenticity</h4>
+  <div class="winners-container" id="proofList" style="max-height: 275px; overflow-y: auto;"></div>
+  <div id="proofArrow" class="scroll-arrow">&darr;</div>
+</div>
+
+<!-- IMAGE MODAL -->
+<div id="imgModal">
+  <span id="closeModal">&times;</span>
+  <img id="modalImg" src="">
+</div>
+
 <script>
 const bgVideo = document.getElementById('bgVideo');
 const bgImage = document.getElementById('bgImage');
 
-function showImage() {
-  bgVideo.style.display = 'none';
-  bgImage.style.display = 'block';
-}
-
-function showVideo() {
-  bgVideo.style.display = 'block';
-  bgImage.style.display = 'none';
-}
+function showImage() { bgVideo.style.display = 'none'; bgImage.style.display = 'block'; }
+function showVideo() { bgVideo.style.display = 'block'; bgImage.style.display = 'none'; }
 
 const videoSource = bgVideo.querySelector('source')?.src;
-
-if (!videoSource || videoSource.trim() === '') {
-  showImage();
-} else {
+if (!videoSource || videoSource.trim() === '') showImage();
+else {
   const playPromise = bgVideo.play();
-  if (playPromise !== undefined) {
-    playPromise
-      .then(() => {
-        showVideo();
-      })
-      .catch(() => {
-        showImage();
-      });
-  }
-
-
+  if (playPromise !== undefined) playPromise.then(showVideo).catch(showImage);
   bgVideo.addEventListener('error', showImage);
-  bgVideo.addEventListener('stalled', showImage);
-  bgVideo.addEventListener('abort', showImage);
 }
-
 
 const winners = [
   { name: "Gab", prize: "$60", facebook: "https://web.facebook.com/thisisnotgab", date: "October 19, 2025" },
   { name: "**** ****", prize: "$100", facebook: "", date: "October 26, 2025" },
-
-
-
-
-
 ];
-
 const winnersList = document.getElementById('winnersList');
 winners.forEach(w => {
   const card = document.createElement('div');
@@ -333,15 +289,11 @@ winners.forEach(w => {
 
 const proofs = [
   { images: ["https://img.eselt.de/img/18689998_aCLnGfSwdS7hsq0o/ad.jpg", "https://img.eselt.de/img/18693492_f0qGrchfhEgdBjzc/ad.jpg"], date: "October 19, 2025" },
-
 ];
-
 const proofList = document.getElementById('proofList');
-
 proofs.forEach(p => {
   const card = document.createElement('div');
   card.className = 'winner-card';
-
   const imagesContainer = document.createElement('div');
   imagesContainer.style.display = 'flex';
   imagesContainer.style.gap = '0.5rem';
@@ -354,88 +306,43 @@ proofs.forEach(p => {
     imgEl.alt = "Proof Image";
     imgEl.style.height = '150px';
     imgEl.style.cursor = 'pointer';
-
     imgEl.onclick = () => {
       document.getElementById('modalImg').src = imgSrc;
       document.getElementById('imgModal').style.display = 'flex';
     };
-
     imagesContainer.appendChild(imgEl);
   });
 
   card.appendChild(imagesContainer);
-
   const dateEl = document.createElement('span');
   dateEl.className = 'winner-date';
   dateEl.textContent = p.date;
   card.appendChild(dateEl);
-
   proofList.appendChild(card);
 });
 
 const imgModal = document.getElementById('imgModal');
 const modalImg = document.getElementById('modalImg');
 const closeModal = document.getElementById('closeModal');
-
-closeModal.addEventListener('click', () => {
-  imgModal.style.display = 'none';
-  modalImg.src = '';
-});
-
-imgModal.addEventListener('click', (e) => {
-  if(e.target === imgModal) {
-    imgModal.style.display = 'none';
-    modalImg.src = '';
-  }
-});
+closeModal.onclick = () => (imgModal.style.display = 'none');
+imgModal.onclick = e => { if (e.target === imgModal) imgModal.style.display = 'none'; };
 
 function handleArrowVisibility(containerId, arrowId) {
   const box = document.getElementById(containerId);
   const arrow = document.getElementById(arrowId);
   if (!box || !arrow) return;
-
   function updateArrow() {
     const canScroll = box.scrollHeight > box.clientHeight + 2;
-    if (!canScroll) {
-      arrow.style.opacity = "0"; 
-      return;
-    }
-
-    arrow.style.opacity = box.scrollTop <= 2 ? "1" : "0";
+    arrow.style.opacity = canScroll && box.scrollTop <= 2 ? "1" : "0";
   }
-
   box.addEventListener("scroll", updateArrow);
   window.addEventListener("resize", updateArrow);
   window.addEventListener("load", updateArrow);
-
-  updateArrow(); 
+  updateArrow();
 }
-
 handleArrowVisibility("infoBox", "infoArrow");
 handleArrowVisibility("winnersList", "winnerArrow");
 handleArrowVisibility("proofList", "proofArrow");
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  const css = `
-    * {
-      -webkit-tap-highlight-color: transparent !important;
-      -webkit-user-select: none !important;
-      -moz-user-select: none !important;
-      -ms-user-select: none !important;
-      user-select: none !important;
-      outline: none !important;
-    }
-    a, img, button, div, span {
-      -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
-    }
-    *:focus { outline: none !important; box-shadow: none !important; }
-  `;
-  const style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
-});
 </script>
 </body>
 </html>
