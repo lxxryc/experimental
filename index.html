@@ -1,607 +1,123 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Protected Quiz</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Send location to Formspree (demo)</title>
   <style>
-
-
-        * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-html, body {
-  height: 100%;
-  overflow: hidden;
-  user-select: none;
-}
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #111;
-  color: #fff;
-  
-}
-
- .card { visibility: hidden; opacity: 0; transition: opacity .25s ease, visibility .25s; }
-body.loaded .card { visibility: visible; opacity: 1; }
-
- .bg-video {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -2;
-  filter: brightness(0.5);
-}
-.bg-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-  z-index: -1;
-}
-
-.container {
-  width: min(90%, 420px);
-  padding: 2rem 1.75rem;
-  border-radius: 20px;
-  text-align: center;
-  background: rgba(20, 20, 20, 0.6);
-  backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-
-  /* modern centering */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  /* center in viewport */
-  position: fixed;
-  inset: 0;
-  margin: auto;
-  height: fit-content;
-  max-height: 90vh;
-  overflow-y: auto;
-  scroll-behavior: smooth;
-
-  animation: fadeIn 0.5s ease forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-
-
-.card {
-  background: rgba(40,40,40,0.5);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.06);
-  padding: 1rem;
-  border-radius: 10px;
-  min-height: 100px;
-  margin-bottom: 1rem;
-}
-
- 
-.title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: lime;
-}
-.info {
-  color: #aaa;
-  font-size: .9rem;
-  margin-bottom: .6rem;
-}
-#confirmationMessage {
-  margin-top: .5rem;
-  color: #4CAF50;
-  font-weight: 600;
-}
-
- .opts button {
-  width: 100%;
-  padding: .7rem;
-  margin:.4rem 0;
-  border-radius: 6px;
-  border: none;
-  background: #555;
-  color: #fff;
-  cursor: pointer;
-  transition: all .2s;
-}
-.opts button:hover { background: #666; }
-.opts button.correct { background: #4CAF50; color: #fff; }
-.opts button.wrong { background: #F44336; color: #fff; }
-
- .cta {
-  width: 100%;
-  padding: .8rem;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  color: #fff;
-  background: #007bff;
-  cursor: pointer;
-  opacity: .6;
-}
-.cta.enabled { opacity: 1; }
-
- .submit-btn {
-  background: #007bff;
-  border: none;
-  padding: .8rem;
-  border-radius: 8px;
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-}
-.submit-btn:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
-
- input, select {
-  width: 100%;
-  padding: .68rem;
-  margin: .5rem 0;
-  border-radius: 6px;
-  border: 1px solid #666;
-  background: #444;
-  color: #fff;
-}
-
- .reward-type {
-  display: flex;
-  justify-content: center;
-  gap: .7rem;
-  margin-top: .8rem;
-}
-.reward-type button {
-  padding: .4rem .8rem;
-  border-radius: 20px;
-  border: none;
-  background: #555;
-  color: #fff;
-  cursor: pointer;
-}
-.reward-type button.active { background: #007bff; color: #fff; }
-
-.hidden { display: none; }
-
-    /* --- PIN overlay styles --- */
-    #pinOverlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      z-index: 9999;
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
-    }
-    #pinBox {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-      padding: 2rem 3rem;
-      border-radius: 1rem;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    }
-    #pinBox input {
-      font-size: 1.5rem;
-      text-align: center;
-      letter-spacing: 0.5rem;
-      border: none;
-      border-bottom: 2px solid #fff;
-      background: transparent;
-      color: #fff;
-      width: 8rem;
-      margin-top: 1rem;
-      outline: none;
-    }
-    #pinBox button {
-      margin-top: 1.5rem;
-      padding: 0.6rem 1.5rem;
-      border: none;
-      border-radius: 0.5rem;
-      background: #00b894;
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    #pinBox button:hover {
-      background: #019374;
-    }
-    #pinError {
-      color: #ff7675;
-      margin-top: 0.8rem;
-      height: 1rem;
-    }
-    #protectedContent {
-      display: none;
-    }
-
-    /* Smooth PIN overlay fade */
-#pinOverlay.fadeOut {
-  opacity: 0;
-  transition: opacity 0.6s ease;
-  pointer-events: none;
-}
-
+    body{ font-family: system-ui, Arial; padding:20px; max-width:760px; }
+    .note{ color:#555; font-size:0.95rem; }
+    button{ padding:10px 14px; border-radius:8px; cursor:pointer; }
+    pre{ background:#f6f6f6; padding:12px; border-radius:6px; overflow:auto; }
   </style>
 </head>
 <body>
+  <h2>Share location (test)</h2>
+  <p class="note">
+    Clicking the button will ask for permission to read your location. Only location coordinates, a timestamp, and a Google Maps link are sent to the form — no name or other personal fields.
+  </p>
 
-  <!-- PIN Overlay -->
-  <div id="pinOverlay">
-    <div id="pinBox">
-      <h2>Enter Access PIN</h2>
-      <input type="password" id="pinInput" maxlength="5" inputmode="numeric" placeholder="•••••" />
-      <div id="pinError"></div>
-      <button id="pinSubmit">Unlock</button>
-    </div>
-  </div>
+  <p>
+    <button id="sendBtn">Share my location</button>
+  </p>
 
-  <!-- Protected Content -->
-  <div id="protectedContent">
-  <video autoplay muted loop playsinline class="bg-video">
-    <source src="https://motionbgs.com/media/2978/minecraft-sunset.960x540.mp4" type="video/mp4">
-  </video>
-  <div class="bg-overlay"></div>
+  <div id="status" aria-live="polite"></div>
+  <pre id="log"></pre>
 
-  <div class="container" id="app">
-    <div class="title">HARD Q&A CHALLENGE</div>
+<script>
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xpwoqaqz'; // ← REPLACE this
+const sendBtn = document.getElementById('sendBtn');
+const status = document.getElementById('status');
+const logEl = document.getElementById('log');
 
-    <div class="card">
-      <div id="qtext"></div>
-      <div class="opts" id="opts"></div>
-    </div>
+function log(...s){ logEl.textContent += s.join(' ') + '\n'; }
+function setStatus(s){ status.textContent = s; }
 
-    <div class="info">
-      <span id="stageLabel">Stage 1</span> • <span id="scoreLabel">0 / 10</span>
-    </div>
-
-    <button id="nextBtn" class="cta" disabled>Proceed to Next Stage</button>
-
-    <div id="reward" class="hidden">
-      <div class="reward-type">
-        <button id="btnLoad" class="active">Load</button>
-        <button id="btnG">GCash</button>
-      </div>
-      <form id="rewardForm">
-        <div id="loadForm">
-          <input id="mobile" type="tel" placeholder="Mobile number" maxlength="11" required />
-          <select id="simSelect" required>
-            <option value="">Select SIM</option>
-            <option>Smart</option><option>Globe</option><option>DITO</option><option>TM</option>
-          </select>
-          <input id="promo" type="text" placeholder="Promo (Optional)" />
-        </div>
-        <div id="gcashForm" style="display:none">
-          <input id="gcashNum" type="tel" placeholder="G number" maxlength="11"/>
-          <input id="gcashName" type="text" placeholder="G name"/>
-        </div>
-        <button type="button" id="submitBtn" class="submit-btn">Submit</button>
-        <div id="confirmationMessage" class="hidden">Submitted successfully!</div>
-      </form>
-    </div>
-  </div>
-  </div>
-
-  <script>
-
-      window.onload = () => {
-  const shuffle = arr => arr.sort(() => Math.random() - 0.5);
-  const encode = s => btoa(unescape(encodeURIComponent(s.split('').reverse().join(''))));
-  const decode = s => decodeURIComponent(escape(atob(s))).split('').reverse().join('');
-
-
-  const stages = [
-    [
-      { q: "Which ancient mathematician is credited with writing 'Elements'?",
-        a: shuffle(["Euclid","Archimedes","Pythagoras","Hypatia","Thales","Eratosthenes","Proclus","Anaximander","Diophantus","Apollonius"]),
-        correct: "ZGlsY3VF" },            
-      { q: "What is the smallest perfect square greater than 1000?",
-        a: shuffle(["1024","1089","1156","1009","1100","1056","1200","1040","1090","1036"]),
-        correct: "NDIwMQ==" },            
-      { q: "Who first measured the speed of light?",
-        a: shuffle(["Ole Rømer","Galileo","Fizeau","Huygens","Newton","Michelson","Einstein","Faraday","Cavendish","Hooke"]),
-        correct: "cmVtw7hSIGVsTw==" },     
-      { q: "Oldest written language still in use?",
-        a: shuffle(["Tamil","Chinese","Greek","Hebrew","Sanskrit","Arabic","Latin","Persian","Mongolian","Armenian"]),
-        correct: "bGltYVQ=" },            
-      { q: "Which gas was first liquefied by Faraday?",
-        a: shuffle(["Chlorine","Ammonia","Carbon dioxide","Hydrogen","Oxygen","Helium","Nitrogen","Neon","Sulfur dioxide","Argon"]),
-        correct: "ZW5pcm9saEM=" },        
-      { q: "Who invented the printing press?",
-        a: shuffle(["Johannes Gutenberg","Leonardo da Vinci","Isaac Newton","Galileo","Copernicus","Kepler","Benjamin Franklin","Pascal","Aristotle","Descartes"]),
-        correct: "Z3JlYm5ldHVHIHNlbm5haG9K" }, 
-      { q: "Which continent has the most countries?",
-        a: shuffle(["Africa","Asia","Europe","South America","North America","Oceania","Antarctica","Middle East","Central America","None"]),
-        correct: "YWNpcmZB" },            
-      { q: "First human to travel into space?",
-        a: shuffle(["Yuri Gagarin","Neil Armstrong","Buzz Aldrin","Alan Shepard","Valentina Tereshkova","John Glenn","Laika","Gus Grissom","Chris Hadfield","Michael Collins"]),
-        correct: "bmlyYWdhRyBpcnVZ" },      
-      { q: "The Great Pyramid is located in?",
-        a: shuffle(["Giza","Saqqara","Luxor","Alexandria","Cairo","Thebes","Aswan","Memphis","Khartoum","Amarna"]),
-        correct: "YXppRw==" },            
-      { q: "Fastest land animal?",
-        a: shuffle(["Cheetah","Leopard","Tiger","Lion","Pronghorn","Ostrich","Horse","Gazelle","Greyhound","Kangaroo"]),
-        correct: "aGF0ZWVoQw==" }         
-    ],
-
-  
-    [
-      { q: "Hardest natural material?",
-        a: shuffle(["Diamond","Quartz","Corundum","Topaz","Ruby","Sapphire","Garnet","Spinel","Graphene","Boron"]),
-        correct: "ZG5vbWFpRA==" },       
-      { q: "Year of first human-powered flight (Kremer Prize)?",
-        a: shuffle(["1977","1969","1980","1984","1975","1979","1981","1973","1985","1990"]),
-        correct: "Nzc5MQ==" },          
-      { q: "Laplace transform of sin(3t)?",
-        a: shuffle(["3/(s^2+9)","s/(s^2+9)","3s/(s^2+9)","1/(s^2+9)","6/(s^2+9)","3/(s+9)","s/(s+9)","9/(s^2+3)","s/9","3/s"]),
-        correct: "KTkrMl5zKC8z" },        
-      { q: "Northernmost capital city?",
-        a: shuffle(["Reykjavik","Oslo","Helsinki","Stockholm","Moscow","Tallinn","Copenhagen","Anchorage","Juneau","Nuuk"]),
-        correct: "a2l2YWpreWVS" },        
-      { q: "Deepest ocean trench?",
-        a: shuffle(["Mariana Trench","Tonga Trench","Java Trench","Philippine Trench","Kuril-Kamchatka","Puerto Rico","Kermadec","Aleutian","Japan Trench","Peru-Chile"]),
-        correct: "aGNuZXJUIGFuYWlyYU0=" }, 
-      { q: "What is the SI unit of power?",
-        a: shuffle(["Watt","Joule","Volt","Ampere","Newton","Ohm","Pascal","Tesla","Candela","Kelvin"]),
-        correct: "dHRhVw==" },           
-      { q: "Which planet has the most moons?",
-        a: shuffle(["Saturn","Jupiter","Neptune","Uranus","Earth","Mars","Venus","Mercury","Pluto","Ceres"]),
-        correct: "bnJ1dGFT" },          
-      { q: "Inventor of the World Wide Web?",
-        a: shuffle(["Tim Berners-Lee","Alan Turing","Steve Jobs","Bill Gates","Vint Cerf","Linus Torvalds","Mark Zuckerberg","Larry Page","John von Neumann","Dennis Ritchie"]),
-        correct: "ZWVMLXNyZW5yZUIgbWlU" }, 
-      { q: "Element with atomic number 79?",
-        a: shuffle(["Gold","Silver","Copper","Platinum","Lead","Iron","Tin","Mercury","Nickel","Zinc"]),
-        correct: "ZGxvRw==" },           
-      { q: "Light year measures?",
-        a: shuffle(["Distance","Time","Speed","Brightness","Mass","Temperature","Frequency","Density","Volume","Energy"]),
-        correct: "ZWNuYXRzaUQ=" }         
-    ],
-
-    
-    [
-      { q: "Radioactive element with longest half-life?",
-        a: shuffle(["Tellurium-128","Uranium-238","Thorium-232","Bismuth-209","Plutonium-244","Polonium-210","Radon-222","Carbon-14","Radium-226","Francium"]),
-        correct: "ODIxLW11aXJ1bGxlVA==" }, 
-      { q: "Who wrote the first machine algorithm?",
-        a: shuffle(["Ada Lovelace","Charles Babbage","Alan Turing","Grace Hopper","John von Neumann","Konrad Zuse","Claude Shannon","Steve Wozniak","Niklaus Wirth","Linus Torvalds"]),
-        correct: "ZWNhbGV2b0wgYWRB" },     
-      { q: "Planet that rotates retrograde?",
-        a: shuffle(["Venus","Uranus","Mars","Neptune","Earth","Mercury","Jupiter","Saturn","Pluto","Ceres"]),
-        correct: "c3VuZVY=" },            
-      { q: "∫ e^(-x²) dx = ?",
-        a: shuffle(["(√π/2) erf(x) + C","sin(x)+C","ln|x|+C","x²/2+C","e^x + C","-e^(-x²)+C","tan^-1(x)+C","x³/3 + C","|x| + C","None of these"]),
-        correct: "QyArICl4KGZyZSApMi/PgOKImig=" },
-      { q: "Strongest synthetic material by density?",
-        a: shuffle(["Carbon nanotube","Kevlar","Graphene","Steel","Titanium","Dyneema","Tungsten","Diamond","Silicon carbide","Fiberglass"]),
-        correct: "ZWJ1dG9uYW4gbm9icmFD" }, 
-      { q: "Fastest supercomputer as of 2025?",
-        a: shuffle(["Frontier","Fugaku","Aurora","Summit","Sierra","LUMI","Perlmutter","Sunway TaihuLight","Titan","Blue Gene"]),
-        correct: "cmVpdG5vckY=" },         
-      { q: "Mathematical constant e ≈ ?",
-        a: shuffle(["2.718","3.141","1.618","2.414","2.303","2.502","2.618","3.333","2.689","2.701"]),
-        correct: "ODE3LjI=" },         
-      { q: "Who proposed the uncertainty principle?",
-        a: shuffle(["Werner Heisenberg","Albert Einstein","Niels Bohr","Erwin Schrödinger","Paul Dirac","Max Planck","Louis de Broglie","Wolfgang Pauli","Richard Feynman","Isaac Newton"]),
-        correct: "Z3JlYm5lc2llSCByZW5yZVc=" }, 
-      { q: "Derivative of tan(x)?",
-        a: shuffle(["sec²(x)","cos²(x)","sin²(x)","1/cos(x)","1/sin(x)","tan(x)","sec(x)tan(x)","-sin(x)","cos(x)","1+x²"]),
-        correct: "KXgowrJjZXM=" },          
-      { q: "In quantum mechanics, Ψ represents?",
-        a: shuffle(["Wave function","Energy","Spin","Momentum","Particle path","Charge","Probability","Amplitude","Mass","Quantum field"]),
-        correct: "bm9pdGNudWYgZXZhVw==" }   
-    ]
-  ];
-
-  const qEl = document.getElementById("qtext");
-  const optsEl = document.getElementById("opts");
-  const stageLabel = document.getElementById("stageLabel");
-  const scoreLabel = document.getElementById("scoreLabel");
-  const nextBtn = document.getElementById("nextBtn");
-  const rewardEl = document.getElementById("reward");
-  const btnLoad = document.getElementById("btnLoad");
-  const btnG = document.getElementById("btnG");
-  const loadForm = document.getElementById("loadForm");
-  const gcashForm = document.getElementById("gcashForm");
-  const submitBtn = document.getElementById("submitBtn");
-  const confirmation = document.getElementById("confirmationMessage");
-
-  let stage = 0, idx = 0, score = 0;
-
-  document.body.classList.add('loaded');
-
-  function render() {
-    const cur = stages[stage][idx];
-    qEl.textContent = cur.q;
-    optsEl.innerHTML = "";
-
-    scoreLabel.textContent = `${score} / ${stages[stage].length}`;
-    cur.a.forEach((opt) => {
-      const b = document.createElement("button");
-      b.textContent = opt;
-      b.onclick = (e) => choose(opt, e);
-      optsEl.appendChild(b);
+async function sendToFormspree(payload) {
+  setStatus('Sending location to Formspree...');
+  log('Payload to send:', JSON.stringify(payload));
+  try {
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
-    stageLabel.textContent = `Stage ${stage + 1}`;
-    nextBtn.disabled = true;
-    nextBtn.classList.remove("enabled");
+    if (res.ok) {
+      setStatus('Location sent successfully ✅');
+      const text = await res.text();
+      log('Formspree response:', res.status, text);
+    } else {
+      setStatus('Failed to send — form responded with status ' + res.status);
+      const errText = await res.text();
+      log('Formspree error:', res.status, errText);
+    }
+  } catch (err) {
+    setStatus('Network error sending to Formspree.');
+    log('Network error:', err);
+  }
+}
+
+async function ipFallbackAndSend(reason) {
+  setStatus('Permission denied or geolocation unavailable — using IP-based fallback (approximate).');
+  log('Fallback reason:', reason);
+  try {
+    const resp = await fetch('https://ipapi.co/json/');
+    if (!resp.ok) throw new Error('IP API failed: ' + resp.status);
+    const j = await resp.json();
+    const payload = {
+      source: 'ip_fallback',
+      coords: {
+        latitude: j.latitude || null,
+        longitude: j.longitude || null,
+        accuracy_m: null,
+        maps_url: j.latitude && j.longitude ? `https://www.google.com/maps?q=${j.latitude},${j.longitude}` : null
+      },
+      ip_city: j.city || null,
+      ip_region: j.region || null,
+      ip_country: j.country_name || null,
+      timestamp: new Date().toISOString()
+    };
+    await sendToFormspree(payload);
+  } catch (e) {
+    setStatus('IP fallback failed — cannot determine location.');
+    log('IP fallback error:', e);
+  }
+}
+
+sendBtn.addEventListener('click', async () => {
+  const want = confirm('This site will request your location and send only coordinates, timestamp, and a Google Maps link to a form for testing. Proceed?');
+  if (!want) {
+    setStatus('User cancelled consent.');
+    return;
   }
 
-  function choose(choice, ev) {
-    const cur = stages[stage][idx];
-    const btns = optsEl.querySelectorAll("button");
-    btns.forEach(b => b.disabled = true);
-    const correct = decode(cur.correct);
-
-    if (choice === correct) {
-      ev.target.classList.add("correct");
-      score++;
-      scoreLabel.textContent = `${score} / ${stages[stage].length}`;
-      setTimeout(() => {
-        idx++;
-        if (idx < stages[stage].length) render();
-        else finishStage();
-      }, 500);
-    } else {
-      ev.target.classList.add("wrong");
-      let c = 5;
-      qEl.textContent = `Wrong! Wait ${c} seconds...`;
-      const timer = setInterval(() => {
-        c--;
-        if (c > 0) qEl.textContent = `Wrong! Wait ${c} seconds...`;
-        else {
-          clearInterval(timer);
-          qEl.textContent = cur.q;
-          btns.forEach(b => { b.disabled = false; b.classList.remove("wrong"); });
-        }
-      }, 1000);
-    }
+  if (!('geolocation' in navigator)) {
+    ipFallbackAndSend('no_geolocation_api');
+    return;
   }
 
-  function finishStage() {
-    if (stage < stages.length - 1) {
-      nextBtn.disabled = false;
-      nextBtn.classList.add("enabled");
-    } else {
-      qEl.textContent = "🎉 Congratulations! Claim your reward below:";
-      optsEl.innerHTML = "";
-      rewardEl.classList.remove("hidden");
-      nextBtn.style.display = "none";
-    }
-  }
-
-  nextBtn.onclick = () => {
-    stage++;
-    idx = 0;
-    score = 0;
-    render();
-  };
-
-  btnLoad.onclick = () => {
-    btnLoad.classList.add("active");
-    btnG.classList.remove("active");
-    loadForm.style.display = "block";
-    gcashForm.style.display = "none";
-  };
-
-  btnG.onclick = () => {
-    btnG.classList.add("active");
-    btnLoad.classList.remove("active");
-    loadForm.style.display = "none";
-    gcashForm.style.display = "block";
-  };
-
-  submitBtn.onclick = async () => {
-    let data = {};
-    if (btnLoad.classList.contains("active")) {
-      const mob = document.getElementById("mobile").value.trim();
-      const sim = document.getElementById("simSelect").value;
-      const promo = document.getElementById("promo").value.trim();
-      if (!/^\d{10,11}$/.test(mob) || !sim) {
-        alert("Enter valid Mobile and SIM info");
-        return;
-      }
-      data = { Mobile: mob, SIM: sim, Promo: promo };
-    } else {
-      const num = document.getElementById("gcashNum").value.trim();
-      const name = document.getElementById("gcashName").value.trim();
-      if (!/^\d{10,11}$/.test(num) || !name) {
-        alert("Enter valid GCash info");
-        return;
-      }
-      data = { GCashNumber: num, GCashName: name };
-    }
-
-    try {
-      const res = await fetch("https://formspree.io/f/xpwoqaqz", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      if (res.ok) {
-        confirmation.classList.remove("hidden");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Submitted";
-      } else alert("Submission failed");
-    } catch (e) {
-      alert("Error submitting form");
-      console.error(e);
-    }
-  };
-
-  render();
-};
-
-// ====== Simple PIN Logic + Smooth Fade (Always Ask) ======
-(function() {
-  const expectedPIN = "11005"; // simple 5-digit PIN
-  const maxAttempts = 5;
-  let attempts = 0;
-
-  const overlay = document.getElementById('pinOverlay');
-  const input = document.getElementById('pinInput');
-  const error = document.getElementById('pinError');
-  const button = document.getElementById('pinSubmit');
-  const protectedContent = document.getElementById('protectedContent');
-
-  function unlock() {
-    const entered = input.value.trim();
-
-    if (!/^\d{5}$/.test(entered)) {
-      error.textContent = "Enter 5 digits (0–9 only).";
-      return;
-    }
-
-    if (entered === expectedPIN) {
-      overlay.classList.add('fadeOut'); // fade-out effect
-      setTimeout(() => {
-        overlay.style.display = 'none';
-        protectedContent.style.display = 'block';
-        document.body.classList.add('loaded'); // triggers fade-in
-      }, 600);
-    } else {
-      attempts++;
-      error.textContent = `Incorrect PIN (${attempts}/${maxAttempts})`;
-      if (attempts >= maxAttempts) {
-        error.textContent = "Too many attempts. Reload page.";
-        input.disabled = true;
-        button.disabled = true;
-      }
-    }
-  }
-
-  // always reset state on reload
-  overlay.style.display = 'flex';
-  protectedContent.style.display = 'none';
-  document.body.classList.remove('loaded');
-
-  button.addEventListener('click', unlock);
-  input.addEventListener('keypress', e => { if (e.key === 'Enter') unlock(); });
-})();
-
-
-  </script>
+  setStatus('Requesting location permission…');
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const lat = Number(pos.coords.latitude.toFixed(6));
+    const lon = Number(pos.coords.longitude.toFixed(6));
+    const accuracy = pos.coords.accuracy ? Math.round(pos.coords.accuracy) : null;
+    const payload = {
+      source: 'browser_geolocation',
+      coords: {
+        latitude: lat,
+        longitude: lon,
+        accuracy_m: accuracy,
+        maps_url: `https://www.google.com/maps?q=${lat},${lon}`
+      },
+      timestamp: new Date(pos.timestamp).toISOString()
+    };
+    log('Got coords from browser:', JSON.stringify(payload.coords));
+    await sendToFormspree(payload);
+  }, (err) => {
+    console.warn('Geolocation error', err);
+    ipFallbackAndSend(err && err.message ? err.message : 'permission_denied_or_error');
+  }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+});
+</script>
 </body>
 </html>
