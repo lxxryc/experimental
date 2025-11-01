@@ -3,38 +3,205 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Share Location Experiment</title>
+
+  <!-- START: HTTPS enforcement (added) -->
+  <script>
+    (function(){
+      // Allow localhost for development, otherwise require https
+      const host = location.hostname;
+      const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '[::1]';
+      const isFile = location.protocol === 'file:';
+      if (isFile) {
+        // show a fullscreen warning if opened from file://
+        document.addEventListener('DOMContentLoaded', () => {
+          const w = document.createElement('div');
+          w.style.position = 'fixed';
+          w.style.inset = '0';
+          w.style.background = 'rgba(0,0,0,0.95)';
+          w.style.color = '#fff';
+          w.style.display = 'flex';
+          w.style.alignItems = 'center';
+          w.style.justifyContent = 'center';
+          w.style.zIndex = '99999';
+          w.style.fontFamily = 'system-ui, Arial, sans-serif';
+          w.style.padding = '20px';
+          w.innerHTML = '<div style="max-width:700px;text-align:center;"><h2>Insecure context — file:// detected</h2><p style="color:#ddd">Geolocation is blocked when opened via file://. Please serve this file over HTTPS or open it via <strong>http://localhost</strong> for testing.</p></div>';
+          document.body.appendChild(w);
+        });
+        return;
+      }
+      if (!isLocalhost && location.protocol !== 'https:') {
+        // attempt to redirect to https preserving host and path
+        try {
+          const httpsUrl = 'https://' + location.host + location.pathname + location.search + location.hash;
+          // Some environments may not support https redirect (e.g., blocked ports). Try it anyway.
+          location.replace(httpsUrl);
+        } catch (e) {
+          // If redirect fails, show a notice early
+          document.addEventListener('DOMContentLoaded', () => {
+            const w = document.createElement('div');
+            w.style.position = 'fixed';
+            w.style.inset = '0';
+            w.style.background = 'rgba(0,0,0,0.95)';
+            w.style.color = '#fff';
+            w.style.display = 'flex';
+            w.style.alignItems = 'center';
+            w.style.justifyContent = 'center';
+            w.style.zIndex = '99999';
+            w.style.fontFamily = 'system-ui, Arial, sans-serif';
+            w.style.padding = '20px';
+            w.innerHTML = '<div style="max-width:700px;text-align:center;"><h2>HTTPS required</h2><p style="color:#ddd">This page requires HTTPS. Please open it using an https:// URL or run a local server at <strong>http://localhost</strong> for testing.</p></div>';
+            document.body.appendChild(w);
+          });
+        }
+      }
+    })();
+  </script>
+  <!-- END: HTTPS enforcement (added) -->
+
   <style>
-    body{ font-family: system-ui, Arial; padding:20px; max-width:760px; }
-    .note{ color:#555; font-size:0.95rem; }
-    button{ padding:10px 14px; border-radius:8px; cursor:pointer; }
-    pre{ background:#f6f6f6; padding:12px; border-radius:6px; overflow:auto; }
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      padding: 20px;
+      max-width: 760px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    .note {
+      color: #555;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      background: #0078d7;
+      color: white;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    button:hover:not(:disabled) {
+      background: #005fa3;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    pre {
+      background: #f6f6f6;
+      padding: 12px;
+      border-radius: 6px;
+      overflow: auto;
+      font-size: 0.9rem;
+    }
+    #statusCard {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 20px;
+    }
+    .loader {
+      border: 3px solid #eee;
+      border-top: 3px solid #0078d7;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    /* Modal for consent */
+    #consentModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    #consentModal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .modal-content h3 {
+      margin-bottom: 10px;
+    }
+    .modal-content p {
+      font-size: 0.95rem;
+      color: #444;
+    }
+    .modal-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
-  <h2>Share location </h2>
+  <h2>Share Location</h2>
   <p class="note">
-    Clicking the button will ask for permission to read your location. Only location coordinates, a timestamp, and a Google Maps link are sent to the form — no name or other personal fields.
+    Clicking the button will request permission to read your location. Only coordinates, timestamp, and a Google Maps link are sent for testing — no personal identifiers are collected.
   </p>
 
-  <p>
-    <button id="sendBtn">Share my location</button>
-  </p>
+  <button id="sendBtn">Share My Location</button>
 
-  <div id="status" aria-live="polite"></div>
-  <pre id="log"></pre>
+  <div id="statusCard">
+    <strong>Status:</strong> <span id="status">Idle</span>
+    <div id="spinner" hidden class="loader"></div>
+    <pre id="log"></pre>
+  </div>
+
+  <!-- Consent Modal -->
+  <div id="consentModal">
+    <div class="modal-content">
+      <h3>Location Sharing Consent</h3>
+      <p>This experiment will collect your approximate coordinates and timestamp for testing accuracy and reliability. No names, emails, or identifiers will be shared.</p>
+      <div class="modal-buttons">
+        <button id="agreeBtn">Allow</button>
+        <button id="cancelBtn" style="background:#ccc; color:black;">Cancel</button>
+      </div>
+    </div>
+  </div>
 
 <script>
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xdkpwwej'; 
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xanpvjav'; // Replace with your Formspree ID
 const sendBtn = document.getElementById('sendBtn');
-const status = document.getElementById('status');
+const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
+const spinner = document.getElementById('spinner');
+const modal = document.getElementById('consentModal');
+const agreeBtn = document.getElementById('agreeBtn');
+const cancelBtn = document.getElementById('cancelBtn');
 
 function log(...s){ logEl.textContent += s.join(' ') + '\n'; }
-function setStatus(s){ status.textContent = s; }
+function setStatus(s){ statusEl.textContent = s; }
+function showSpinner(show=true){ spinner.hidden = !show; }
+function handleError(msg, err){ setStatus(msg); log('Error:', msg, err || ''); console.error(msg, err); }
 
 async function sendToFormspree(payload) {
-  setStatus('Sending location to Formspree...');
-  log('Payload to send:', JSON.stringify(payload));
+  setStatus('Sending location...');
+  showSpinner(true);
+  log('Payload:', JSON.stringify(payload, null, 2));
   try {
     const res = await fetch(FORMSPREE_ENDPOINT, {
       method: 'POST',
@@ -43,32 +210,32 @@ async function sendToFormspree(payload) {
     });
     if (res.ok) {
       setStatus('Location sent successfully ✅');
-      const text = await res.text();
-      log('Formspree response:', res.status, text);
     } else {
-      setStatus('Failed to send — form responded with status ' + res.status);
       const errText = await res.text();
-      log('Formspree error:', res.status, errText);
+      handleError('Failed to send — status ' + res.status, errText);
     }
   } catch (err) {
-    setStatus('Network error sending to Formspree.');
-    log('Network error:', err);
+    handleError('Network error sending to Formspree.', err);
+  } finally {
+    showSpinner(false);
+    sendBtn.disabled = false;
   }
 }
 
 async function ipFallbackAndSend(reason) {
-  setStatus('Permission denied or geolocation unavailable — using IP-based fallback (approximate).');
+  setStatus('Using approximate IP-based location...');
   log('Fallback reason:', reason);
+  showSpinner(true);
   try {
     const resp = await fetch('https://ipapi.co/json/');
     if (!resp.ok) throw new Error('IP API failed: ' + resp.status);
     const j = await resp.json();
     const payload = {
+      version: 1,
       source: 'ip_fallback',
       coords: {
         latitude: j.latitude || null,
         longitude: j.longitude || null,
-        accuracy_m: null,
         maps_url: j.latitude && j.longitude ? `https://www.google.com/maps?q=${j.latitude},${j.longitude}` : null
       },
       ip_city: j.city || null,
@@ -78,29 +245,34 @@ async function ipFallbackAndSend(reason) {
     };
     await sendToFormspree(payload);
   } catch (e) {
-    setStatus('IP fallback failed — cannot determine location.');
-    log('IP fallback error:', e);
+    handleError('IP fallback failed.', e);
+  } finally {
+    showSpinner(false);
   }
 }
 
-sendBtn.addEventListener('click', async () => {
-  const want = confirm('This site will request your location and send only coordinates, timestamp, and a Google Maps link to a form for testing. Proceed?');
-  if (!want) {
-    setStatus('User cancelled consent.');
-    return;
-  }
+function getLocation(options = {}) {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+  });
+}
 
+async function startLocationProcess() {
+  sendBtn.disabled = true;
   if (!('geolocation' in navigator)) {
-    ipFallbackAndSend('no_geolocation_api');
+    await ipFallbackAndSend('no_geolocation_api');
     return;
   }
 
-  setStatus('Requesting location permission…');
-  navigator.geolocation.getCurrentPosition(async (pos) => {
+  setStatus('Requesting location permission...');
+  showSpinner(true);
+  try {
+    const pos = await getLocation({ enableHighAccuracy: true, timeout: 15000 });
     const lat = Number(pos.coords.latitude.toFixed(6));
     const lon = Number(pos.coords.longitude.toFixed(6));
     const accuracy = pos.coords.accuracy ? Math.round(pos.coords.accuracy) : null;
     const payload = {
+      version: 1,
       source: 'browser_geolocation',
       coords: {
         latitude: lat,
@@ -110,12 +282,29 @@ sendBtn.addEventListener('click', async () => {
       },
       timestamp: new Date(pos.timestamp).toISOString()
     };
-    log('Got coords from browser:', JSON.stringify(payload.coords));
-    await sendToFormspree(payload);
-  }, (err) => {
-    console.warn('Geolocation error', err);
-    ipFallbackAndSend(err && err.message ? err.message : 'permission_denied_or_error');
-  }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+        log('Got browser coords:', JSON.stringify(payload.coords));
+        await sendToFormspree(payload);
+    } catch (err) {
+        handleError('Geolocation error, using fallback...', err);
+        await ipFallbackAndSend(err.message || 'permission_denied');
+    } finally {
+        showSpinner(false);
+    }
+    }
+
+// Modal Logic
+sendBtn.addEventListener('click', () => {
+  modal.classList.add('active');
+});
+
+agreeBtn.addEventListener('click', () => {
+  modal.classList.remove('active');
+  startLocationProcess();
+});
+
+cancelBtn.addEventListener('click', () => {
+  modal.classList.remove('active');
+  setStatus('User cancelled consent.');
 });
 </script>
 </body>
