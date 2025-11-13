@@ -1,311 +1,386 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Share Location Experiment</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>Reward Mechanics & Winners</title>
+<style>
+:root {
+  --accent: #00ffc6;
+  --bg1: #0f2027;
+  --bg2: #203a43;
+  --bg3: #2c5364;
+  --text: #fff;
+  font-size: 87.5%;
+  font-family: 'Poppins', sans-serif;
+}
 
-  <!-- START: HTTPS enforcement (added) -->
-  <script>
-    (function(){
-      // Allow localhost for development, otherwise require https
-      const host = location.hostname;
-      const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '[::1]';
-      const isFile = location.protocol === 'file:';
-      if (isFile) {
-        // show a fullscreen warning if opened from file://
-        document.addEventListener('DOMContentLoaded', () => {
-          const w = document.createElement('div');
-          w.style.position = 'fixed';
-          w.style.inset = '0';
-          w.style.background = 'rgba(0,0,0,0.95)';
-          w.style.color = '#fff';
-          w.style.display = 'flex';
-          w.style.alignItems = 'center';
-          w.style.justifyContent = 'center';
-          w.style.zIndex = '99999';
-          w.style.fontFamily = 'system-ui, Arial, sans-serif';
-          w.style.padding = '20px';
-          w.innerHTML = '<div style="max-width:700px;text-align:center;"><h2>Insecure context — file:// detected</h2><p style="color:#ddd">Geolocation is blocked when opened via file://. Please serve this file over HTTPS or open it via <strong>http://localhost</strong> for testing.</p></div>';
-          document.body.appendChild(w);
-        });
-        return;
-      }
-      if (!isLocalhost && location.protocol !== 'https:') {
-        // attempt to redirect to https preserving host and path
-        try {
-          const httpsUrl = 'https://' + location.host + location.pathname + location.search + location.hash;
-          // Some environments may not support https redirect (e.g., blocked ports). Try it anyway.
-          location.replace(httpsUrl);
-        } catch (e) {
-          // If redirect fails, show a notice early
-          document.addEventListener('DOMContentLoaded', () => {
-            const w = document.createElement('div');
-            w.style.position = 'fixed';
-            w.style.inset = '0';
-            w.style.background = 'rgba(0,0,0,0.95)';
-            w.style.color = '#fff';
-            w.style.display = 'flex';
-            w.style.alignItems = 'center';
-            w.style.justifyContent = 'center';
-            w.style.zIndex = '99999';
-            w.style.fontFamily = 'system-ui, Arial, sans-serif';
-            w.style.padding = '20px';
-            w.innerHTML = '<div style="max-width:700px;text-align:center;"><h2>HTTPS required</h2><p style="color:#ddd">This page requires HTTPS. Please open it using an https:// URL or run a local server at <strong>http://localhost</strong> for testing.</p></div>';
-            document.body.appendChild(w);
-          });
-        }
-      }
-    })();
-  </script>
-  <!-- END: HTTPS enforcement (added) -->
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
-  <style>
-    body {
-      font-family: system-ui, Arial, sans-serif;
-      padding: 20px;
-      max-width: 760px;
-      margin: auto;
-      background: #f9f9f9;
-    }
-    h2 {
-      margin-bottom: 10px;
-    }
-    .note {
-      color: #555;
-      font-size: 0.95rem;
-      margin-bottom: 20px;
-    }
-    button {
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      border: none;
-      background: #0078d7;
-      color: white;
-      font-size: 1rem;
-      transition: background 0.2s;
-    }
-    button:hover:not(:disabled) {
-      background: #005fa3;
-    }
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-    pre {
-      background: #f6f6f6;
-      padding: 12px;
-      border-radius: 6px;
-      overflow: auto;
-      font-size: 0.9rem;
-    }
-    #statusCard {
-      background: white;
-      border-radius: 10px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      margin-top: 20px;
-    }
-    .loader {
-      border: 3px solid #eee;
-      border-top: 3px solid #0078d7;
-      border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 10px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    /* Modal for consent */
-    #consentModal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-    #consentModal.active {
-      display: flex;
-    }
-    .modal-content {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      max-width: 400px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    .modal-content h3 {
-      margin-bottom: 10px;
-    }
-    .modal-content p {
-      font-size: 0.95rem;
-      color: #444;
-    }
-    .modal-buttons {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-  </style>
+html, body {
+  height: 100%;
+  color: var(--text);
+  overflow-x: hidden;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+/* Subtle moving background gradient animation */
+body {
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* GLASS EFFECT BOXES */
+.content-box {
+  width: 100%;
+  max-width: 720px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  height: 280px;
+  position: relative;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.content-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+.section-title {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+}
+
+.sticky-title {
+  position: sticky;
+  top: 0;
+  background: rgba(15, 15, 15, 0.65);
+  padding: 0.25rem 0;
+  z-index: 3;
+  border-bottom: 1px solid rgba(0,255,198,0.2);
+}
+
+/* Scroll container */
+.scrollable-container {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.3rem;
+  scroll-behavior: smooth;
+}
+
+/* Lists */
+.section-list {
+  list-style: none;
+  line-height: 1.4;
+  text-align: justify;
+}
+.section-list li {
+  margin-bottom: 0.55rem;
+  font-weight: 500;
+}
+
+/* WINNER CARDS */
+.winner-card {
+  border: 1px solid rgba(0,255,198,0.25);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.6rem;
+  background: rgba(255,255,255,0.05);
+  transition: transform .18s ease, background .2s ease;
+}
+.winner-card:hover {
+  transform: scale(1.02);
+  background: rgba(255,255,255,0.1);
+}
+.winner-card a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 0.25rem;
+}
+.winner-prize {
+  display: block;
+  color: #fff;
+  font-weight: 500;
+}
+.winner-date {
+  font-size: 0.7rem;
+  color: #ccc;
+  opacity: 0.85;
+}
+
+/* PROOF IMAGES */
+#proofBox .scrollable-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-start;
+}
+#proofBox img {
+  max-height: 120px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform .25s ease;
+}
+#proofBox img:hover { transform: scale(1.05); }
+
+/* MODAL */
+#imgModal, #aboutModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+#imgModal img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 0 25px rgba(0,255,198,0.25);
+}
+#closeModal, #closeAbout {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: var(--accent);
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+#closeModal:hover, #closeAbout:hover {
+  transform: scale(1.1);
+}
+
+/* ABOUT */
+.about-content {
+  background: rgba(20,20,20,0.85);
+  border: 1px solid rgba(0,255,198,0.3);
+  border-radius: 14px;
+  padding: 1.3rem 1.5rem;
+  width: 90%;
+  max-width: 600px;
+  color: #fff;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  text-align: justify;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+.about-btn {
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: color 0.2s ease;
+}
+.about-btn:hover { color: #00b38f; }
+
+/* SECTION DIVIDER */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(0,255,198,0.3);
+  margin: 0.8rem auto;
+  box-shadow: 0 0 6px rgba(0,255,198,0.3);
+}
+
+/* Scroll arrow */
+.scroll-arrow {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--accent);
+  animation: bounce 1.2s infinite;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  font-size: 1.2rem;
+}
+@keyframes bounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -5px); }
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content-box { height: 260px; }
+}
+@media (max-width: 480px) {
+  :root { font-size: 82%; }
+  .content-box { height: 240px; }
+}
+</style>
 </head>
 <body>
-  <h2>Share Location</h2>
-  <p class="note">
-    Clicking the button will request permission to read your location. Only coordinates, timestamp, and a Google Maps link are sent for testing — no personal identifiers are collected.
-  </p>
 
-  <button id="sendBtn">Share My Location</button>
-
-  <div id="statusCard">
-    <strong>Status:</strong> <span id="status">Idle</span>
-    <div id="spinner" hidden class="loader"></div>
-    <pre id="log"></pre>
+<section class="content-box" id="infoBox">
+  <div class="top-bar">
+    <h2 class="section-title">Mechanics</h2>
+    <span class="about-btn" id="aboutBtn">About</span>
   </div>
-
-  <!-- Consent Modal -->
-  <div id="consentModal">
-    <div class="modal-content">
-      <h3>Location Sharing Consent</h3>
-      <p>This experiment will collect your approximate coordinates and timestamp for testing accuracy and reliability. No names, emails, or identifiers will be shared.</p>
-      <div class="modal-buttons">
-        <button id="agreeBtn">Allow</button>
-        <button id="cancelBtn" style="background:#ccc; color:black;">Cancel</button>
-      </div>
-    </div>
+  <div class="scrollable-container">
+    <ul class="section-list">
+      <li>Select preferred reward: <strong>Load</strong> / <strong>GCash</strong>.</li>
+      <li><strong>Submit your details.</strong></li>
+      <li>The admin will place all submitted numbers into a random draw. The selected number will receive the prize.</li>
+      <li><strong style="color: darkorange;">Important</strong>: The prize is <strong>legit</strong> and will be sent safely. You just have to wait depending on the admin’s capacity at the time.</li>
+      <li><strong style="color: darkorange;">Important</strong>: Participation is entirely voluntary, and all personal identities will remain strictly confidential.</li>
+      <li><strong style="color: darkorange;">Important:</strong> Kindly provide accurate contact information to ensure proper delivery of your reward. <strong>G'luck!</strong></li>
+    </ul>
   </div>
+  <div class="scroll-arrow" id="infoArrow">&darr;</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="content-box" id="winnersBox">
+  <h2 class="section-title sticky-title">Winner</h2>
+  <div class="scrollable-container" id="winnersList"></div>
+  <div class="scroll-arrow" id="winnerArrow">&darr;</div>
+</section>
+
+<a href="https://lxxryc.github.io/liveresult/" target="_blank" style="display:inline-block;padding:8px 14px;background-color:#111;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;box-shadow:0 0 10px rgba(0,255,198,0.3);">View Result</a>
+
+<div class="section-divider"></div>
+
+<section class="content-box" id="proofBox">
+  <h2 class="section-title sticky-title">Authenticity</h2>
+  <div class="scrollable-container" id="proofList"></div>
+  <div class="scroll-arrow" id="proofArrow">&darr;</div>
+</section>
+
+<!-- Modals -->
+<div id="imgModal">
+  <span id="closeModal">&times;</span>
+  <img id="modalImg" src="" alt="Proof image">
+</div>
+
+<div id="aboutModal">
+  <span id="closeAbout">&times;</span>
+  <div class="about-content">
+    <p>
+      <strong><span style="color: #00ffc6;">Louís Ryc</span></strong>: I created this initiative to share a portion of my extra funds whenever available — and whenever I can.
+      <br><br>
+      <strong style="color: darkorange;">For your assurance:</strong> The prize is <strong style="color: lime;">legit</strong>, but the value may vary based on available funds. 
+      <br><br>
+      The goal is simple — try your luck, and I’ll personally handle the prize. Even if it’s small, I hope it brings a smile.
+      <br><br>
+      Please review the details provided. If a countdown or “pending” status appears, that’s all there is for now — stay tuned!
+    </p>
+  </div>
+</div>
 
 <script>
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xanpvjav'; // Replace with your Formspree ID
-const sendBtn = document.getElementById('sendBtn');
-const statusEl = document.getElementById('status');
-const logEl = document.getElementById('log');
-const spinner = document.getElementById('spinner');
-const modal = document.getElementById('consentModal');
-const agreeBtn = document.getElementById('agreeBtn');
-const cancelBtn = document.getElementById('cancelBtn');
+const winners = [
+  { name: "Gab", prize: "$60", facebook: "https://web.facebook.com/thisisnotgab", date: "October 19, 2025" },
+  { name: "**** ****", prize: "$100", facebook: "https://facebook.com/", date: "October 26, 2025" },
+];
 
-function log(...s){ logEl.textContent += s.join(' ') + '\n'; }
-function setStatus(s){ statusEl.textContent = s; }
-function showSpinner(show=true){ spinner.hidden = !show; }
-function handleError(msg, err){ setStatus(msg); log('Error:', msg, err || ''); console.error(msg, err); }
+const proofs = [
+  { images: ["https://img.eselt.de/img/18689998_aCLnGfSwdS7hsq0o/ad.jpg", "https://img.eselt.de/img/18693492_f0qGrchfhEgdBjzc/ad.jpg"], date: "October 19, 2025" },
+];
 
-async function sendToFormspree(payload) {
-  setStatus('Sending location...');
-  showSpinner(true);
-  log('Payload:', JSON.stringify(payload, null, 2));
-  try {
-    const res = await fetch(FORMSPREE_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-      setStatus('Location sent successfully ✅');
-    } else {
-      const errText = await res.text();
-      handleError('Failed to send — status ' + res.status, errText);
-    }
-  } catch (err) {
-    handleError('Network error sending to Formspree.', err);
-  } finally {
-    showSpinner(false);
-    sendBtn.disabled = false;
-  }
-}
+// Populate winners
+const winnersList = document.getElementById('winnersList');
+winners.forEach(w => {
+  const card = document.createElement('div');
+  card.className = 'winner-card';
+  card.innerHTML = `
+    <a href="${w.facebook}" target="_blank" rel="noopener noreferrer">${w.name}</a>
+    <span class="winner-prize">${w.prize}</span>
+    <span class="winner-date">${w.date}</span>`;
+  winnersList.appendChild(card);
+});
 
-async function ipFallbackAndSend(reason) {
-  setStatus('Using approximate IP-based location...');
-  log('Fallback reason:', reason);
-  showSpinner(true);
-  try {
-    const resp = await fetch('https://ipapi.co/json/');
-    if (!resp.ok) throw new Error('IP API failed: ' + resp.status);
-    const j = await resp.json();
-    const payload = {
-      version: 1,
-      source: 'ip_fallback',
-      coords: {
-        latitude: j.latitude || null,
-        longitude: j.longitude || null,
-        maps_url: j.latitude && j.longitude ? `https://www.google.com/maps?q=${j.latitude},${j.longitude}` : null
-      },
-      ip_city: j.city || null,
-      ip_region: j.region || null,
-      ip_country: j.country_name || null,
-      timestamp: new Date().toISOString()
-    };
-    await sendToFormspree(payload);
-  } catch (e) {
-    handleError('IP fallback failed.', e);
-  } finally {
-    showSpinner(false);
-  }
-}
-
-function getLocation(options = {}) {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+// Populate proofs
+const proofList = document.getElementById('proofList');
+proofs.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'winner-card';
+  const imgs = document.createElement('div');
+  imgs.style.display = 'flex';
+  imgs.style.gap = '0.5rem';
+  p.images.forEach(src => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.onclick = () => openModal(src);
+    imgs.appendChild(img);
   });
-}
+  const date = document.createElement('span');
+  date.className = 'winner-date';
+  date.textContent = p.date;
+  card.append(imgs, date);
+  proofList.appendChild(card);
+});
 
-async function startLocationProcess() {
-  sendBtn.disabled = true;
-  if (!('geolocation' in navigator)) {
-    await ipFallbackAndSend('no_geolocation_api');
-    return;
+// Image modal
+const imgModal = document.getElementById('imgModal');
+const modalImg = document.getElementById('modalImg');
+const closeModal = document.getElementById('closeModal');
+function openModal(src) { modalImg.src = src; imgModal.style.display = 'flex'; }
+closeModal.onclick = () => imgModal.style.display = 'none';
+imgModal.onclick = e => { if (e.target === imgModal) imgModal.style.display = 'none'; };
+
+// About modal
+const aboutBtn = document.getElementById('aboutBtn');
+const aboutModal = document.getElementById('aboutModal');
+const closeAbout = document.getElementById('closeAbout');
+aboutBtn.onclick = () => aboutModal.style.display = 'flex';
+closeAbout.onclick = () => aboutModal.style.display = 'none';
+aboutModal.onclick = e => { if (e.target === aboutModal) aboutModal.style.display = 'none'; };
+
+// Arrow visibility
+function handleArrowVisibility(sectionId, arrowId) {
+  const section = document.getElementById(sectionId);
+  const scrollEl = section.querySelector('.scrollable-container');
+  const arrow = document.getElementById(arrowId);
+  function updateArrow() {
+    const canScroll = scrollEl.scrollHeight > scrollEl.clientHeight + 5;
+    arrow.style.opacity = canScroll && scrollEl.scrollTop <= 2 ? '1' : '0';
   }
-
-  setStatus('Requesting location permission...');
-  showSpinner(true);
-  try {
-    const pos = await getLocation({ enableHighAccuracy: true, timeout: 15000 });
-    const lat = Number(pos.coords.latitude.toFixed(6));
-    const lon = Number(pos.coords.longitude.toFixed(6));
-    const accuracy = pos.coords.accuracy ? Math.round(pos.coords.accuracy) : null;
-    const payload = {
-      version: 1,
-      source: 'browser_geolocation',
-      coords: {
-        latitude: lat,
-        longitude: lon,
-        accuracy_m: accuracy,
-        maps_url: `https://www.google.com/maps?q=${lat},${lon}`
-      },
-      timestamp: new Date(pos.timestamp).toISOString()
-    };
-        log('Got browser coords:', JSON.stringify(payload.coords));
-        await sendToFormspree(payload);
-    } catch (err) {
-        handleError('Geolocation error, using fallback...', err);
-        await ipFallbackAndSend(err.message || 'permission_denied');
-    } finally {
-        showSpinner(false);
-    }
-    }
-
-// Modal Logic
-sendBtn.addEventListener('click', () => {
-  modal.classList.add('active');
-});
-
-agreeBtn.addEventListener('click', () => {
-  modal.classList.remove('active');
-  startLocationProcess();
-});
-
-cancelBtn.addEventListener('click', () => {
-  modal.classList.remove('active');
-  setStatus('User cancelled consent.');
-});
+  scrollEl.addEventListener('scroll', updateArrow);
+  window.addEventListener('resize', updateArrow);
+  window.addEventListener('load', updateArrow);
+  updateArrow();
+}
+handleArrowVisibility('infoBox', 'infoArrow');
+handleArrowVisibility('winnersBox', 'winnerArrow');
+handleArrowVisibility('proofBox', 'proofArrow');
 </script>
 </body>
 </html>
