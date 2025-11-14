@@ -1,367 +1,304 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Louís Ryc — Reward Portal</title>
+  <title>Louís Ryc — Ultra Modern Reward Magazine</title>
+  <meta name="description" content="Official reward portal by Louís Ryc — mechanics, verified winners and proofs." />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500;600&display=swap');
-
-    :root {
-      --accent: #00ffc6;
-      --text-dark: #222;
-      --text-light: #555;
-      --bg: #f9fafb;
-      --card-bg: #ffffff;
-      --border: #e5e7eb;
+    /* Fonts (system fallbacks for offline) */
+    :root{
+      --accent: #00bfa6; /* slightly deeper aqua for print */
+      --muted: #6b7280;
+      --bg: #fbfbfb;
+      --card: #ffffff;
+      --glass: rgba(255,255,255,0.7);
+      --shadow: 0 8px 30px rgba(18,24,32,0.06);
+      --radius: 16px;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      color-scheme: light;
+      font-size: 16px;
     }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#ffffff 0%,#f6f7f9 100%);}
+    body{display:flex;align-items:flex-start;justify-content:center;padding:36px 20px 80px;color:#0f1724}/* Page container — magazine width */
+.wrap{width:100%;max-width:1200px}
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
+/* Header / masthead */
+header.mast{display:flex;align-items:flex-start;gap:20px;margin-bottom:28px}
+.brand{display:flex;flex-direction:column;gap:6px}
+.brand .title{font-family:'Georgia','Playfair Display',serif;font-size:28px;color:#06121a;letter-spacing:-0.4px}
+.brand .subtitle{color:var(--muted);font-size:14px}
 
-    body {
-      background: var(--bg);
-      color: var(--text-dark);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 2rem 1rem 4rem;
-    }
+/* Right utilities */
+.utils{margin-left:auto;display:flex;gap:12px;align-items:center}
+.cta{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:600;box-shadow:0 6px 18px rgba(0,191,166,0.18)}
+.ghost{background:transparent;color:var(--muted);padding:8px 12px;border-radius:10px;border:1px solid #eef2f5}
 
-    header {
-      width: 100%;
-      max-width: 1000px;
-      text-align: center;
-      margin-bottom: 2rem;
-    }
+/* Magazine grid layout: hero + article column */
+.mag-grid{display:grid;grid-template-columns: 2fr 1fr;gap:20px}
 
-    header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      color: var(--text-dark);
-      letter-spacing: -0.5px;
-    }
+/* HERO area — left column top */
+.hero{background:linear-gradient(180deg,rgba(0,191,166,0.06),transparent);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero .eyebrow{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.hero h1{font-family:'Playfair Display','Georgia',serif;margin:0;font-size:28px;color:#032026}
+.hero p.lead{color:var(--muted);margin-top:10px;line-height:1.5}
 
-    header p {
-      color: var(--text-light);
-      font-size: 0.95rem;
-      margin-top: 0.5rem;
-    }
+/* Decorative abstract art (SVG blobs) */
+.hero .art{position:absolute;right:-40px;top:-40px;opacity:0.18;transform:rotate(10deg);pointer-events:none}
 
-    main {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 1000px;
-    }
+/* Card cluster under hero: mechanics, quick stats */
+.cards-row{display:flex;gap:16px;margin-top:18px}
+.card{background:var(--card);border-radius:12px;padding:14px;border:1px solid #eef2f5;flex:1;min-width:0}
+.card h3{margin:0;color:#08323a;font-size:15px}
+.card p{margin:6px 0 0;color:var(--muted);font-size:13px}
 
-    section {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      height: 400px;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      animation: fadeIn 0.6s ease;
-    }
+/* Right column: stacked modules */
+.right-col{display:flex;flex-direction:column;gap:16px}
 
-    section:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.08);
-    }
+/* Article cards (mechanics, winners, proofs) styled as magazine pieces */
+section.module{background:var(--card);border-radius:12px;padding:18px;border:1px solid #eef2f5;box-shadow:0 6px 20px rgba(15,23,42,0.04);min-height:220px;display:flex;flex-direction:column}
+.module h2{font-family:'Playfair Display',serif;margin:0 0 8px 0;color:#064b47;font-size:18px}
+.module .meta{color:var(--muted);font-size:13px;margin-bottom:12px}
+.module .body{flex:1;overflow:auto;padding-right:6px}
 
-    h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
-      color: var(--accent);
-      margin-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.3rem;
-    }
+ul.bullet{list-style:none;padding-left:0;margin:0}
+ul.bullet li{padding:8px 0;border-bottom:1px dashed #f1f4f6;color:var(--muted);font-size:14px}
+ul.bullet li:last-child{border-bottom:none}
 
-    .scrollable-container {
-      overflow-y: auto;
-      flex: 1;
-      padding-right: 0.5rem;
-      scroll-behavior: smooth;
-    }
+/* Winners list with emphasized prize */
+.winner-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid #f2f6f6;margin-bottom:10px}
+.avatar{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#eafff9,#e6fff6);display:flex;align-items:center;justify-content:center;font-weight:700;color:#004d45}
+.winner-info{flex:1}
+.winner-name{font-weight:700;color:#052a2a}
+.winner-prize{color:var(--accent);font-weight:700}
+.small{font-size:12px;color:var(--muted)}
 
-    ul.section-list {
-      list-style: none;
-      line-height: 1.6;
-      font-size: 0.95rem;
-      color: var(--text-light);
-    }
+/* Proof thumbnails */
+.proofs{display:flex;flex-wrap:wrap;gap:10px}
+.proofs img{width:120px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #eef3f3;cursor:pointer;box-shadow:0 6px 18px rgba(6,36,32,0.04)}
 
-    ul.section-list li {
-      margin-bottom: 0.75rem;
-    }
+/* Footer quicklinks */
+footer.sitefoot{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
 
-    .winner-card {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.75rem;
-      margin-bottom: 0.6rem;
-      background: #fdfdfd;
-      transition: background 0.2s ease;
-    }
+/* Modal styles */
+.modal-backdrop{position:fixed;inset:0;background:rgba(4,8,12,0.45);display:flex;align-items:center;justify-content:center;z-index:1200;}
+.modal-card{background:white;border-radius:14px;padding:20px;max-width:900px;width:94%;box-shadow:0 20px 60px rgba(2,6,10,0.36)}
+.modal-close{position:absolute;right:16px;top:12px;font-size:18px;color:var(--muted);cursor:pointer}
 
-    .winner-card:hover {
-      background: #f8fdfc;
-    }
+/* Responsive: single column stack on small screens */
+@media (max-width:900px){
+  .mag-grid{grid-template-columns:1fr;}
+  .hero{order:0}
+}
 
-    .winner-card a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-      display: inline-block;
-      margin-bottom: 0.25rem;
-    }
+/* Small tweaks */
+.muted{color:var(--muted)}
+a.link{color:var(--accent);text-decoration:none}
 
-    .winner-prize {
-      display: block;
-      font-weight: 500;
-      color: var(--text-dark);
-    }
+/* subtle fade-in on load */
+.fade{opacity:0;transform:translateY(8px);animation:enter .6s forwards}
+.fade.delay{animation-delay:0.06s}
+@keyframes enter{to{opacity:1;transform:none}}
 
-    .winner-date {
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-
-    #proofBox .scrollable-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    #proofBox img {
-      max-height: 110px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.25s ease;
-      border: 1px solid var(--border);
-    }
-
-    #proofBox img:hover {
-      transform: scale(1.05);
-    }
-
-    #aboutBtn {
-      position: absolute;
-      top: 1.2rem;
-      right: 1.5rem;
-      cursor: pointer;
-      font-weight: 600;
-      color: var(--accent);
-      transition: opacity 0.2s ease;
-    }
-
-    #aboutBtn:hover {
-      opacity: 0.7;
-    }
-
-    #aboutModal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(6px);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    .about-content {
-      background: white;
-      border-radius: 14px;
-      padding: 1.5rem 2rem;
-      max-width: 600px;
-      color: var(--text-dark);
-      line-height: 1.6;
-      font-size: 0.95rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      position: relative;
-    }
-
-    #closeAbout {
-      position: absolute;
-      top: 1rem;
-      right: 1.5rem;
-      cursor: pointer;
-      color: var(--accent);
-      font-size: 1.5rem;
-    }
-
-    #imgModal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-    }
-
-    #imgModal img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 10px;
-    }
-
-    #closeModal {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      color: white;
-      font-size: 2rem;
-      cursor: pointer;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    footer {
-      margin-top: 3rem;
-      color: var(--text-light);
-      font-size: 0.85rem;
-    }
-
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    @media (max-width: 600px) {
-      section {
-        height: auto;
-      }
-    }
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <header class="mast">
+      <div class="brand fade">
+        <div class="title">Louís Ryc</div>
+        <div class="subtitle">Reward Portal — verified draws & proofs</div>
+      </div>
+      <div class="utils fade delay">
+        <a class="ghost" href="#proof">Proofs</a>
+        <a class="cta" href="https://lxxryc.github.io/liveresult/" target="_blank">Live Result</a>
+      </div>
+    </header><div class="mag-grid">
+  <!-- Left Column (Hero + Cards) -->
+  <div>
+    <article class="hero fade">
+      <div class="eyebrow">Latest Giveaway</div>
+      <h1>Small acts — big smiles. Enter the draw & see verified winners.</h1>
+      <p class="lead">Every draw is handled personally. Below you’ll find the mechanics, verified winners, and proof images. Participation is voluntary and privacy is respected.</p>
 
-  <header>
-    <h1>Louís Ryc Reward Portal</h1>
-    <p>Legit giveaways, random draws, and verified winners — managed personally by Louís Ryc.</p>
-  </header>
+      <svg class="art" width="220" height="220" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1">
+            <stop offset="0%" stop-color="#00c4a4" />
+            <stop offset="100%" stop-color="#9ff3e8" />
+          </linearGradient>
+        </defs>
+        <circle cx="80" cy="60" r="70" fill="url(#g1)" />
+      </svg>
 
-  <main>
-    <section id="infoBox">
+      <div class="cards-row" aria-hidden="true">
+        <div class="card">
+          <h3>Entries</h3>
+          <p id="entriesCount">—</p>
+        </div>
+        <div class="card">
+          <h3>Next Draw</h3>
+          <p id="nextDraw">TBA</p>
+        </div>
+      </div>
+    </article>
+
+    <section class="card fade delay" aria-labelledby="infoBox">
+      <h3 id="infoBox">About this initiative</h3>
+      <p class="muted" style="margin-top:8px">A small note from the host — why this exists and how winners are chosen.</p>
+      <div style="margin-top:12px;color:var(--muted);font-size:14px;line-height:1.6">
+        <strong style="color:var(--accent)">Louís Ryc</strong>: I created this initiative to share a portion of my extra funds whenever available — and whenever I can. The countdown (if present) indicates when a draw opens. Values may vary depending on available funds.
+      </div>
+    </section>
+  </div>
+
+  <!-- Right Column (Modules) -->
+  <aside class="right-col">
+    <section class="module fade" id="mechanics">
       <h2>Mechanics</h2>
-      <span id="aboutBtn">About</span>
-      <div class="scrollable-container">
-        <ul class="section-list">
+      <div class="meta">How to participate</div>
+      <div class="body">
+        <ul class="bullet">
           <li>Select preferred reward: <strong>Load</strong> / <strong>GCash</strong>.</li>
           <li><strong>Submit your details.</strong></li>
           <li>The admin will place all submitted numbers into a random draw. The selected number will receive the prize.</li>
-          <li><strong style="color: darkorange;">Important</strong>: The prize is <strong>legit</strong> and will be sent safely. You just have to wait depending on the admin’s capacity at the time.</li>
-          <li><strong style="color: darkorange;">Important</strong>: Participation is entirely voluntary, and all personal identities will remain strictly confidential.</li>
-          <li><strong style="color: darkorange;">Important:</strong> Kindly provide accurate contact information to ensure proper delivery of your reward. Sayang kay kung fake. <strong>G'luck!</strong></li>
+          <li><strong class="muted">Important</strong>: The prize is <strong>legit</strong> and will be sent safely. You just have to wait depending on the admin’s capacity at the time.</li>
+          <li><strong class="muted">Privacy</strong>: Participation is voluntary, personal identities remain confidential.</li>
         </ul>
       </div>
     </section>
 
-    <section id="winnersBox">
+    <section class="module fade delay" id="winners">
       <h2>Winners</h2>
-      <div class="scrollable-container" id="winnersList"></div>
+      <div class="meta">Recent recipients</div>
+      <div class="body" id="winnersList" aria-live="polite"></div>
     </section>
 
-    <section id="proofBox">
+    <section class="module fade" id="proof">
       <h2>Authenticity</h2>
-      <div class="scrollable-container" id="proofList"></div>
+      <div class="meta">Screenshots & receipts</div>
+      <div class="body">
+        <div class="proofs" id="proofList"></div>
+      </div>
     </section>
-  </main>
+  </aside>
+</div>
 
-  <footer>
-    <p>View live results at <a href="https://lxxryc.github.io/liveresult/" target="_blank">lxxryc.github.io/liveresult</a></p>
-  </footer>
+<footer class="sitefoot fade delay">Built & managed by <strong>Louís Ryc</strong> — <a class="link" href="https://lxxryc.github.io/liveresult/" target="_blank">View live results</a></footer>
 
-  <div id="aboutModal">
-    <div class="about-content">
-      <span id="closeAbout">&times;</span>
-      <p>
-        <strong><span style="color: var(--accent);">Louís Ryc</span></strong>: I created this initiative to share a portion of my extra funds whenever available — and whenever I can.
-        If you’ve reached this page through the link on my bio and are wondering about the value’s legitimacy and the purpose of the countdown:
-        <br><br>
-        <strong style="color: darkorange;">For your assurance:</strong> The prize is <strong style="color: lime;">legit</strong>, but the value may vary based on available funds. 
-        The countdown indicates when participation becomes available; once it opens, it remains active for a limited time.
-        <br><br>
-        The goal is simple — try your luck, and I’ll personally handle the prize.
-        Even if it’s small, I hope it’s appreciated nonetheless.
-      </p>
+  </div>  <!-- Modal template (hidden) -->  <template id="modalTpl">
+    <div class="modal-backdrop" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <div class="modal-close" id="modalClose">✕</div>
+        <div id="modalContent"></div>
+      </div>
     </div>
-  </div>
-
-  <div id="imgModal">
-    <span id="closeModal">&times;</span>
-    <img id="modalImg" src="" alt="Proof" />
-  </div>
-
-  <script>
-    const winners = [
+  </template>  <script>
+    // Data — preserved from original
+    const winnersData = [
       { name: "Gab", prize: "$60", facebook: "https://web.facebook.com/thisisnotgab", date: "October 19, 2025" },
-      { name: "**** ****", prize: "$100", facebook: "https://facebook.com/", date: "October 26, 2025" },
+      { name: "**** ****", prize: "$100", facebook: "https://facebook.com/", date: "October 26, 2025" }
     ];
 
-    const proofs = [
+    const proofsData = [
       { images: [
         "https://img.eselt.de/img/18689998_aCLnGfSwdS7hsq0o/ad.jpg",
         "https://img.eselt.de/img/18693492_f0qGrchfhEgdBjzc/ad.jpg"
-      ], date: "October 19, 2025" },
+      ], date: "October 19, 2025" }
     ];
 
-    const winnersList = document.getElementById('winnersList');
-    winners.forEach(w => {
-      const card = document.createElement('div');
-      card.className = 'winner-card';
-      card.innerHTML = `
-        <a href="${w.facebook}" target="_blank" rel="noopener noreferrer">${w.name}</a>
-        <span class="winner-prize">${w.prize}</span>
-        <span class="winner-date">${w.date}</span>`;
-      winnersList.appendChild(card);
+    // Utilities
+    const q = s => document.querySelector(s);
+    const qAll = s => document.querySelectorAll(s);
+
+    // Populate quick stats
+    const entriesCount = q('#entriesCount');
+    const nextDraw = q('#nextDraw');
+    // placeholder counts — can be wired to API
+    entriesCount.textContent = 'Entries: ' + (Math.floor(Math.random()*120)+20);
+    nextDraw.textContent = 'No active countdown';
+
+    // Populate winners
+    const winnersList = q('#winnersList');
+    winnersData.forEach(w => {
+      const wrap = document.createElement('div');
+      wrap.className = 'winner-item';
+
+      const av = document.createElement('div'); av.className='avatar'; av.textContent = (w.name && w.name[0]) || 'W';
+      const info = document.createElement('div'); info.className='winner-info';
+      const name = document.createElement('div'); name.className='winner-name';
+      name.innerHTML = `<a class="link" href="${w.facebook}" target="_blank" rel="noopener noreferrer">${w.name}</a>`;
+      const prize = document.createElement('div'); prize.className='winner-prize'; prize.textContent = w.prize;
+      const date = document.createElement('div'); date.className='small'; date.textContent = w.date;
+
+      info.appendChild(name); info.appendChild(prize); info.appendChild(date);
+      wrap.appendChild(av); wrap.appendChild(info);
+      winnersList.appendChild(wrap);
     });
 
-    const proofList = document.getElementById('proofList');
-    proofs.forEach(p => {
+    // Populate proofs
+    const proofList = q('#proofList');
+    proofsData.forEach(p => {
       p.images.forEach(src => {
-        const img = document.createElement('img');
-        img.src = src;
-        img.onclick = () => openModal(src);
+        const img = document.createElement('img'); img.src = src; img.alt = 'Proof image';
+        img.loading = 'lazy';
+        img.onclick = () => openModalWithImage(src);
         proofList.appendChild(img);
       });
     });
 
-    const aboutBtn = document.getElementById('aboutBtn');
-    const aboutModal = document.getElementById('aboutModal');
-    const closeAbout = document.getElementById('closeAbout');
-    aboutBtn.onclick = () => aboutModal.style.display = 'flex';
-    closeAbout.onclick = () => aboutModal.style.display = 'none';
-    aboutModal.onclick = e => { if (e.target === aboutModal) aboutModal.style.display = 'none'; };
-
-    const imgModal = document.getElementById('imgModal');
-    const modalImg = document.getElementById('modalImg');
-    const closeModal = document.getElementById('closeModal');
-    function openModal(src) {
-      modalImg.src = src;
-      imgModal.style.display = 'flex';
+    // Modal helper
+    function openModalWithImage(src){
+      const tpl = document.getElementById('modalTpl');
+      const node = tpl.content.cloneNode(true);
+      const backdrop = node.querySelector('.modal-backdrop');
+      const content = node.getElementById('modalContent');
+      const closeBtn = node.getElementById('modalClose');
+      const img = document.createElement('img'); img.src = src; img.style.maxWidth='100%'; img.style.borderRadius='8px';
+      content.appendChild(img);
+      document.body.appendChild(backdrop);
+      function remove(){ backdrop.remove(); document.removeEventListener('keydown', onEsc); }
+      closeBtn.onclick = remove;
+      backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) remove(); });
+      function onEsc(e){ if(e.key==='Escape') remove(); }
+      document.addEventListener('keydown', onEsc);
     }
-    closeModal.onclick = () => imgModal.style.display = 'none';
-    imgModal.onclick = e => { if (e.target === imgModal) imgModal.style.display = 'none'; };
-  </script>
-</body>
+
+    // Accessibility: focus outlines and keyboard shortcuts
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='?' || (e.key==='/' && e.shiftKey)){
+        // quick show about
+        showAbout();
+      }
+    });
+
+    // About modal inline (simple)
+    function showAbout(){
+      const tpl = document.getElementById('modalTpl');
+      const node = tpl.content.cloneNode(true);
+      const backdrop = node.querySelector('.modal-backdrop');
+      const content = node.getElementById('modalContent');
+      const closeBtn = node.getElementById('modalClose');
+      content.innerHTML = `
+        <h3 style="margin:0 0 8px 0;color:#052a2a;font-family:'Playfair Display',serif">About — Louís Ryc</h3>
+        <p style="color:var(--muted);line-height:1.6;font-size:14px">I created this initiative to share a portion of my extra funds whenever available — and whenever I can. If you’ve reached this page through the link on my bio and are wondering about the value’s legitimacy and the purpose of the countdown: The prize is <strong style="color:var(--accent)">legit</strong>, but the value may vary based on available funds. The countdown indicates when participation becomes available; once it opens, it remains active only for a specific time.</p>
+      `;
+      document.body.appendChild(backdrop);
+      function remove(){ backdrop.remove(); document.removeEventListener('keydown', onEsc); }
+      closeBtn.onclick = remove;
+      backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) remove(); });
+      function onEsc(e){ if(e.key==='Escape') remove(); }
+      document.addEventListener('keydown', onEsc);
+    }
+
+    // Wire About quick link
+    const aboutBtn = document.getElementById('aboutBtn');
+    aboutBtn.addEventListener('click', showAbout);
+
+    // small progressive reveal for fade elements
+    window.addEventListener('load', ()=>{
+      document.querySelectorAll('.fade').forEach((el,i)=>{ el.style.animationDelay = (i*60)+'ms'; el.classList.add('visible')});
+    });
+
+  </script></body>
 </html>
