@@ -1,304 +1,530 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Louís Ryc — Ultra Modern Reward Magazine</title>
-  <meta name="description" content="Official reward portal by Louís Ryc — mechanics, verified winners and proofs." />
+  <meta name="description" content="Official reward portal by Louís Ryc — mechanics and verified winners." />
+
   <style>
-    /* Fonts (system fallbacks for offline) */
-    :root{
-      --accent: #00bfa6; /* slightly deeper aqua for print */
+    /* --- GLOBAL VARIABLES --- */
+    :root {
+      --accent: #00bfa6;
       --muted: #6b7280;
       --bg: #fbfbfb;
       --card: #ffffff;
-      --glass: rgba(255,255,255,0.7);
-      --shadow: 0 8px 30px rgba(18,24,32,0.06);
+      --text: #0f172a;
+      --shadow-soft: 0 3px 12px rgba(0,0,0,0.06);
       --radius: 16px;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      color-scheme: light;
-      font-size: 16px;
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: 15px;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#ffffff 0%,#f6f7f9 100%);}
-    body{display:flex;align-items:flex-start;justify-content:center;padding:36px 20px 80px;color:#0f1724}/* Page container — magazine width */
-.wrap{width:100%;max-width:1200px}
 
-/* Header / masthead */
-header.mast{display:flex;align-items:flex-start;gap:20px;margin-bottom:28px}
-.brand{display:flex;flex-direction:column;gap:6px}
-.brand .title{font-family:'Georgia','Playfair Display',serif;font-size:28px;color:#06121a;letter-spacing:-0.4px}
-.brand .subtitle{color:var(--muted);font-size:14px}
+    body.dark-mode {
+      --bg: #121212;
+      --card: #1e1e1e;
+      --text: #e5e5e5;
+      --muted: #aaa;
+      --shadow-soft: 0 3px 12px rgba(0,0,0,0.3);
+    }
 
-/* Right utilities */
-.utils{margin-left:auto;display:flex;gap:12px;align-items:center}
-.cta{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:600;box-shadow:0 6px 18px rgba(0,191,166,0.18)}
-.ghost{background:transparent;color:var(--muted);padding:8px 12px;border-radius:10px;border:1px solid #eef2f5}
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 18px 14px 80px;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      transition: background 0.3s, color 0.3s;
+    }
 
-/* Magazine grid layout: hero + article column */
-.mag-grid{display:grid;grid-template-columns: 2fr 1fr;gap:20px}
+    .wrap {
+      width: 100%;
+      max-width: 900px;
+    }
 
-/* HERO area — left column top */
-.hero{background:linear-gradient(180deg,rgba(0,191,166,0.06),transparent);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.hero .eyebrow{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
-.hero h1{font-family:'Playfair Display','Georgia',serif;margin:0;font-size:28px;color:#032026}
-.hero p.lead{color:var(--muted);margin-top:10px;line-height:1.5}
+    h1, h2, h3 {
+      font-family: "Playfair Display", serif;
+      margin: 0 0 8px;
+      color: var(--text);
+    }
 
-/* Decorative abstract art (SVG blobs) */
-.hero .art{position:absolute;right:-40px;top:-40px;opacity:0.18;transform:rotate(10deg);pointer-events:none}
+    p, li, div, span {
+      font-family: "Inter", system-ui, sans-serif;
+      color: var(--text);
+    }
 
-/* Card cluster under hero: mechanics, quick stats */
-.cards-row{display:flex;gap:16px;margin-top:18px}
-.card{background:var(--card);border-radius:12px;padding:14px;border:1px solid #eef2f5;flex:1;min-width:0}
-.card h3{margin:0;color:#08323a;font-size:15px}
-.card p{margin:6px 0 0;color:var(--muted);font-size:13px}
+    /* --- TAB BAR --- */
+    .tab-bar {
+      display: flex;
+      margin-bottom: 16px;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 20;
+    }
 
-/* Right column: stacked modules */
-.right-col{display:flex;flex-direction:column;gap:16px}
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-weight: 600;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: var(--card);
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      color: var(--text);
+    }
 
-/* Article cards (mechanics, winners, proofs) styled as magazine pieces */
-section.module{background:var(--card);border-radius:12px;padding:18px;border:1px solid #eef2f5;box-shadow:0 6px 20px rgba(15,23,42,0.04);min-height:220px;display:flex;flex-direction:column}
-.module h2{font-family:'Playfair Display',serif;margin:0 0 8px 0;color:#064b47;font-size:18px}
-.module .meta{color:var(--muted);font-size:13px;margin-bottom:12px}
-.module .body{flex:1;overflow:auto;padding-right:6px}
+    .tab-btn:first-child { border-radius: 12px 0 0 12px; border-right: none; }
+    .tab-btn:last-child { border-radius: 0 12px 12px 0; border-left: none; }
+    .tab-btn:not(:first-child):not(:last-child) { border-radius: 0; border-left: none; border-right: none; }
 
-ul.bullet{list-style:none;padding-left:0;margin:0}
-ul.bullet li{padding:8px 0;border-bottom:1px dashed #f1f4f6;color:var(--muted);font-size:14px}
-ul.bullet li:last-child{border-bottom:none}
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
 
-/* Winners list with emphasized prize */
-.winner-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid #f2f6f6;margin-bottom:10px}
-.avatar{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#eafff9,#e6fff6);display:flex;align-items:center;justify-content:center;font-weight:700;color:#004d45}
-.winner-info{flex:1}
-.winner-name{font-weight:700;color:#052a2a}
-.winner-prize{color:var(--accent);font-weight:700}
-.small{font-size:12px;color:var(--muted)}
+    /* --- SECTIONS --- */
+    .section { display: none; animation: fadeIn .4s ease; }
+    .section.active { display: block; }
 
-/* Proof thumbnails */
-.proofs{display:flex;flex-wrap:wrap;gap:10px}
-.proofs img{width:120px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #eef3f3;cursor:pointer;box-shadow:0 6px 18px rgba(6,36,32,0.04)}
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-/* Footer quicklinks */
-footer.sitefoot{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
+    /* --- CARDS --- */
+    .card, .module {
+      background: var(--card);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 18px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 16px;
+      text-align: justify;
+      transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
 
-/* Modal styles */
-.modal-backdrop{position:fixed;inset:0;background:rgba(4,8,12,0.45);display:flex;align-items:center;justify-content:center;z-index:1200;}
-.modal-card{background:white;border-radius:14px;padding:20px;max-width:900px;width:94%;box-shadow:0 20px 60px rgba(2,6,10,0.36)}
-.modal-close{position:absolute;right:16px;top:12px;font-size:18px;color:var(--muted);cursor:pointer}
+    ul.bullet {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    ul.bullet li {
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(0,0,0,0.1);
+      font-size: 14px;
+      color: var(--muted);
+    }
+    ul.bullet li:last-child { border-bottom: none; }
 
-/* Responsive: single column stack on small screens */
-@media (max-width:900px){
-  .mag-grid{grid-template-columns:1fr;}
-  .hero{order:0}
+/* --- WINNERS --- */
+#winnersList {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
-/* Small tweaks */
-.muted{color:var(--muted)}
-a.link{color:var(--accent);text-decoration:none}
+.winner-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 12px;
+  transition: background 0.3s, border-color 0.3s;
+}
 
-/* subtle fade-in on load */
-.fade{opacity:0;transform:translateY(8px);animation:enter .6s forwards}
-.fade.delay{animation-delay:0.06s}
-@keyframes enter{to{opacity:1;transform:none}}
+.winner-item .avatar {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* perfect circle */
+  background: rgba(0,191,166,0.15);
+  color: var(--text, #0f172a);
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s, color 0.3s;
+}
+
+.winner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* spacing between name, prize, date */
+}
+
+.winner-name a {
+  color: var(--text, #0f172a);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.winner-prize {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.winner-date {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Remove hover effect entirely for a clean look */
+.winner-item:hover {
+  transform: none;
+  box-shadow: var(--shadow-soft);
+}
+
+
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--bg);
+      padding: 12px 0;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      z-index: 10;
+    }
+
+    /* --- SETTINGS PANEL --- */
+    #settingsToggle {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      background: #555;
+      color: #fff;
+      padding: 12px;
+      border-radius: 8px 0 0 8px;
+      cursor: grab;
+      z-index: 1000;
+      transition: right 0.3s;
+      touch-action: none;
+    }
+    
+#settingsPanel {
+  position: fixed;
+  top: 50%;
+  right: -220px;
+  transform: translateY(-50%);
+  width: 200px;
+  background: var(--card);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 8px 0 0 8px;
+  padding: 16px;
+  box-shadow: -2px 2px 12px rgba(0,0,0,0.2);
+  z-index: 2000;   /* FIXED — now sits above the gear icon */
+  transition: right 0.3s, background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+ 
+    #settingsPanel.open { right: 1px; } 
+
+    #settingsPanel button {
+      width: 100%;
+      margin: 4px 0;
+      padding: 6px 8px;
+      cursor: pointer;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.2);
+      background: rgba(0,0,0,0.05);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .module-text { line-height: 1.6; text-align: justify; }
+
+    @media (min-width: 820px) { body { padding: 40px 20px; } .tab-bar { position: static; } }
+
+    #settingsIcon {
+      font-size: 20px; /* ← Change to any size you want */
+      line-height: 1;
+      display: inline-block;
+    }
+
+    #settingsToggle {
+  height: 46px;
+  width: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#settingsIcon {
+  font-size: 22px;
+  display: inline-block;
+  transition: transform 0.4s linear;
+}
+
+#settingsToggle.spin #settingsIcon {
+  transform: rotate(360deg);
+}
+
 
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="mast">
-      <div class="brand fade">
-        <div class="title">Louís Ryc</div>
-        <div class="subtitle">Reward Portal — verified draws & proofs</div>
-      </div>
-      <div class="utils fade delay">
-        <a class="ghost" href="#proof">Proofs</a>
-        <a class="cta" href="https://lxxryc.github.io/liveresult/" target="_blank">Live Result</a>
-      </div>
-    </header><div class="mag-grid">
-  <!-- Left Column (Hero + Cards) -->
-  <div>
-    <article class="hero fade">
-      <div class="eyebrow">Latest Giveaway</div>
-      <h1>Small acts — big smiles. Enter the draw & see verified winners.</h1>
-      <p class="lead">Every draw is handled personally. Below you’ll find the mechanics, verified winners, and proof images. Participation is voluntary and privacy is respected.</p>
 
-      <svg class="art" width="220" height="220" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="g1" x1="0" x2="1">
-            <stop offset="0%" stop-color="#00c4a4" />
-            <stop offset="100%" stop-color="#9ff3e8" />
-          </linearGradient>
-        </defs>
-        <circle cx="80" cy="60" r="70" fill="url(#g1)" />
-      </svg>
-
-      <div class="cards-row" aria-hidden="true">
-        <div class="card">
-          <h3>Entries</h3>
-          <p id="entriesCount">—</p>
-        </div>
-        <div class="card">
-          <h3>Next Draw</h3>
-          <p id="nextDraw">TBA</p>
-        </div>
-      </div>
-    </article>
-
-    <section class="card fade delay" aria-labelledby="infoBox">
-      <h3 id="infoBox">About this initiative</h3>
-      <p class="muted" style="margin-top:8px">A small note from the host — why this exists and how winners are chosen.</p>
-      <div style="margin-top:12px;color:var(--muted);font-size:14px;line-height:1.6">
-        <strong style="color:var(--accent)">Louís Ryc</strong>: I created this initiative to share a portion of my extra funds whenever available — and whenever I can. The countdown (if present) indicates when a draw opens. Values may vary depending on available funds.
-      </div>
-    </section>
+<div class="wrap">
+  <!-- TABS -->
+  <div class="tab-bar">
+    <div class="tab-btn active" data-tab="about">About</div>
+    <div class="tab-btn" data-tab="mechanics">Mechanics</div>
+    <div class="tab-btn" data-tab="winners">Winners</div>
   </div>
 
-  <!-- Right Column (Modules) -->
-  <aside class="right-col">
-    <section class="module fade" id="mechanics">
-      <h2>Mechanics</h2>
-      <div class="meta">How to participate</div>
-      <div class="body">
+  <!-- ABOUT -->
+    <section class="section active" id="tab-about">
+      <div class="card">
+        <div class="module-text">
+            <strong><span style="color: darkorange;">Louís Ryc</span></strong>: I created this initiative to share a portion of my extra funds whenever available — and whenever I can.
+            If you’ve reached this page through the link on my bio and are wondering about the value’s legitimacy and the purpose of the countdown. <br><br>
+            <strong><span style="color: darkorange;">For your assurance</span></strong>: The prize is <strong><span>legit</span></strong>, but the value may still vary based on available funds. The countdown indicates when participation becomes available; and once it opens, it remains active only for a specific time.
+            <br><br>
+            The goal is simple — try your luck, and I’ll personally handle the prize.
+            I understand that the amount may be small; nevertheless, I hope it’s still appreciated despite its simplicity.
+            <br><br>
+            Please take a moment to review the details provided throughout, especially if there’s a <span><strong>value</strong></span> displayed.
+            If it appears as pending or unavailable, that’s all there is for now.
+            If a countdown appears, it indicates something — <span>so stay tuned!</span>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- MECHANICS -->
+    <section class="section" id="tab-mechanics">
+      <div class="module">
         <ul class="bullet">
-          <li>Select preferred reward: <strong>Load</strong> / <strong>GCash</strong>.</li>
-          <li><strong>Submit your details.</strong></li>
-          <li>The admin will place all submitted numbers into a random draw. The selected number will receive the prize.</li>
-          <li><strong class="muted">Important</strong>: The prize is <strong>legit</strong> and will be sent safely. You just have to wait depending on the admin’s capacity at the time.</li>
-          <li><strong class="muted">Privacy</strong>: Participation is voluntary, personal identities remain confidential.</li>
+              <li>Select preferred reward: <strong>Load</strong> / <strong>GCash</strong>.</li>
+              <li><strong>Submit your details.</strong></li>
+              <li>The admin will place all submitted numbers into a random draw, and the selected number will receive the prize.</li>
+              <li><strong class="muted"></strong>The prize is <strong>legit</strong> and will be sent safely. You just have to wait depending on the admin’s capacity at the time.</li>
+              <li><strong class="muted">Participation</strong> is voluntary, and personal information will remain confidential.</li>
         </ul>
       </div>
     </section>
 
-    <section class="module fade delay" id="winners">
-      <h2>Winners</h2>
-      <div class="meta">Recent recipients</div>
-      <div class="body" id="winnersList" aria-live="polite"></div>
-    </section>
+  <!-- WINNERS -->
+  <section class="section" id="tab-winners">
+    <div class="module">
+      <div id="winnersList"></div>
+    </div>
+  </section>
 
-    <section class="module fade" id="proof">
-      <h2>Authenticity</h2>
-      <div class="meta">Screenshots & receipts</div>
-      <div class="body">
-        <div class="proofs" id="proofList"></div>
-      </div>
-    </section>
-  </aside>
+  <footer>Built & managed by <strong>Louís Ryc</strong></footer>
 </div>
 
-<footer class="sitefoot fade delay">Built & managed by <strong>Louís Ryc</strong> — <a class="link" href="https://lxxryc.github.io/liveresult/" target="_blank">View live results</a></footer>
+<!-- SETTINGS -->
+<div id="settingsToggle">
+  <span id="settingsIcon">🛠️</span>
+</div>
+<div id="settingsPanel">
+  <h3>Settings</h3>
+  <button id="darkModeBtn">Change Theme</button>
+  <hr>
+  <p style="font-size: 13px; color: var(--muted);">Drag the gear icon to reposition the settings panel.</p>
+</div>
 
-  </div>  <!-- Modal template (hidden) -->  <template id="modalTpl">
-    <div class="modal-backdrop" role="dialog" aria-modal="true">
-      <div class="modal-card">
-        <div class="modal-close" id="modalClose">✕</div>
-        <div id="modalContent"></div>
-      </div>
-    </div>
-  </template>  <script>
-    // Data — preserved from original
-    const winnersData = [
-      { name: "Gab", prize: "$60", facebook: "https://web.facebook.com/thisisnotgab", date: "October 19, 2025" },
-      { name: "**** ****", prize: "$100", facebook: "https://facebook.com/", date: "October 26, 2025" }
-    ];
+<script>
 
-    const proofsData = [
-      { images: [
-        "https://img.eselt.de/img/18689998_aCLnGfSwdS7hsq0o/ad.jpg",
-        "https://img.eselt.de/img/18693492_f0qGrchfhEgdBjzc/ad.jpg"
-      ], date: "October 19, 2025" }
-    ];
 
-    // Utilities
-    const q = s => document.querySelector(s);
-    const qAll = s => document.querySelectorAll(s);
+// Disable text selection for entire document
+document.body.style.userSelect = 'none';
+document.body.style.webkitUserSelect = 'none';
+document.body.style.mozUserSelect = 'none';
+document.body.style.msUserSelect = 'none';
+/* --- TAB SWITCHING --- */
+const tabBtns = document.querySelectorAll('.tab-btn');
+const sections = document.querySelectorAll('.section');
+tabBtns.forEach(btn => {
+  btn.onclick = () => {
+    tabBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    sections.forEach(sec => sec.classList.remove('active'));
+    document.querySelector('#tab-' + btn.dataset.tab).classList.add('active');
+  };
+});
+ 
+/* --- WINNERS LIST --- */
+const winnersData = [
+  { name: "GAB", prize: "$60", facebook: "https://web.facebook.com/thisisnotgab", date: "October 19, 2025" },
+  { name: "CASSIE", prize: "$100", facebook: "https://facebook.com/", date: "October 26, 2025" }
 
-    // Populate quick stats
-    const entriesCount = q('#entriesCount');
-    const nextDraw = q('#nextDraw');
-    // placeholder counts — can be wired to API
-    entriesCount.textContent = 'Entries: ' + (Math.floor(Math.random()*120)+20);
-    nextDraw.textContent = 'No active countdown';
+];
+const winnersList = document.getElementById('winnersList');
+winnersData.forEach(w => {
+  const el = document.createElement('div');
+  el.className = 'winner-item';
+  el.innerHTML = `
+    <div class="avatar">${w.name[0]}</div>
+    <div>
+      <div class="winner-name"><a href="${w.facebook}" target="_blank">${w.name}</a></div>
+      <div class="winner-prize">${w.prize}</div>
+      <div class="winner-date">${w.date}</div>
+    </div>`;
+  winnersList.appendChild(el);
+});
 
-    // Populate winners
-    const winnersList = q('#winnersList');
-    winnersData.forEach(w => {
-      const wrap = document.createElement('div');
-      wrap.className = 'winner-item';
+/* --- SETTINGS PANEL --- */
+const settingsToggle = document.getElementById('settingsToggle');
+const settingsPanel = document.getElementById('settingsPanel');
+const darkModeBtn = document.getElementById('darkModeBtn');
 
-      const av = document.createElement('div'); av.className='avatar'; av.textContent = (w.name && w.name[0]) || 'W';
-      const info = document.createElement('div'); info.className='winner-info';
-      const name = document.createElement('div'); name.className='winner-name';
-      name.innerHTML = `<a class="link" href="${w.facebook}" target="_blank" rel="noopener noreferrer">${w.name}</a>`;
-      const prize = document.createElement('div'); prize.className='winner-prize'; prize.textContent = w.prize;
-      const date = document.createElement('div'); date.className='small'; date.textContent = w.date;
+// safety: ensure panel sits above toggle
+settingsPanel.style.zIndex = '2000';
+settingsToggle.style.zIndex = '1000';
 
-      info.appendChild(name); info.appendChild(prize); info.appendChild(date);
-      wrap.appendChild(av); wrap.appendChild(info);
-      winnersList.appendChild(wrap);
-    });
+let isDragging = false;
+let dragMoved = false;
+let startY = 0;
+let startTop = 0;
 
-    // Populate proofs
-    const proofList = q('#proofList');
-    proofsData.forEach(p => {
-      p.images.forEach(src => {
-        const img = document.createElement('img'); img.src = src; img.alt = 'Proof image';
-        img.loading = 'lazy';
-        img.onclick = () => openModalWithImage(src);
-        proofList.appendChild(img);
-      });
-    });
+// When panel opens we move the toggle left so it never overlaps the panel
+// (values tuned for your CSS: panel right when open = 50px, width=200 -> move toggle to right:260px)
+function moveToggleOut() {
+  settingsToggle.style.right = '260px';
+}
+function moveToggleIn() {
+  settingsToggle.style.right = '0';
+}
 
-    // Modal helper
-    function openModalWithImage(src){
-      const tpl = document.getElementById('modalTpl');
-      const node = tpl.content.cloneNode(true);
-      const backdrop = node.querySelector('.modal-backdrop');
-      const content = node.getElementById('modalContent');
-      const closeBtn = node.getElementById('modalClose');
-      const img = document.createElement('img'); img.src = src; img.style.maxWidth='100%'; img.style.borderRadius='8px';
-      content.appendChild(img);
-      document.body.appendChild(backdrop);
-      function remove(){ backdrop.remove(); document.removeEventListener('keydown', onEsc); }
-      closeBtn.onclick = remove;
-      backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) remove(); });
-      function onEsc(e){ if(e.key==='Escape') remove(); }
-      document.addEventListener('keydown', onEsc);
-    }
+function startDrag(y){
+  isDragging = true;
+  dragMoved = false; // reset
+  startY = y;
+  // If top not set inline yet, compute fallback
+  const csTop = window.getComputedStyle(settingsToggle).top;
+  startTop = parseInt(csTop, 10) || (window.innerHeight * 0.5);
+  settingsToggle.style.transition = 'none';
+  settingsPanel.style.transition = 'none';
+}
 
-    // Accessibility: focus outlines and keyboard shortcuts
-    document.addEventListener('keydown', (e)=>{
-      if(e.key==='?' || (e.key==='/' && e.shiftKey)){
-        // quick show about
-        showAbout();
+function doDrag(y){
+  if(!isDragging) return;
+
+  const delta = y - startY;
+  if (Math.abs(delta) > 3) dragMoved = true; // small threshold to detect a real drag
+
+  let newTop = startTop + delta;
+  newTop = Math.max(20, Math.min(window.innerHeight - 60, newTop));
+
+  settingsToggle.style.top = newTop + 'px';
+  settingsPanel.style.top = newTop + 'px';
+}
+
+function stopDrag(){
+  isDragging = false;
+
+  // short timeout to avoid immediate click after finishing a drag
+  setTimeout(()=> { dragMoved = false; }, 120);
+
+  settingsToggle.style.cursor = 'grab';
+  settingsToggle.style.transition = 'right 0.25s, top 0.2s';
+  settingsPanel.style.transition = 'right 0.25s, top 0.2s';
+}
+
+/* --- MOUSE EVENTS --- */
+settingsToggle.addEventListener('mousedown', e => {
+  // Only start drag if left mouse button
+  if (e.button !== 0) return;
+  startDrag(e.clientY);
+  settingsToggle.style.cursor = 'grabbing';
+});
+// keep global listeners so dragging remains smooth if pointer leaves the toggle
+document.addEventListener('mousemove', e => doDrag(e.clientY));
+document.addEventListener('mouseup', stopDrag);
+
+/* --- TOUCH EVENTS --- */
+settingsToggle.addEventListener('touchstart', e => {
+  startDrag(e.touches[0].clientY);
+}, { passive: true });
+
+settingsToggle.addEventListener('touchmove', e => {
+  // prevent page scroll while dragging the toggle
+  if (isDragging) {
+    e.preventDefault();
+    doDrag(e.touches[0].clientY);
+  }
+}, { passive: false });
+
+settingsToggle.addEventListener('touchend', stopDrag);
+
+/* --- CLICK (open/close) - only if it wasn't a drag --- */
+settingsToggle.addEventListener('click', (e) => {
+  e.stopPropagation(); // prevent document click from immediately closing
+  if (dragMoved) return; // was a drag, not a click
+
+  const willOpen = !settingsPanel.classList.contains('open');
+  settingsPanel.classList.toggle('open');
+
+  if (willOpen) {
+    // move the toggle out of the panel's way so the panel is fully clickable
+    moveToggleOut();
+  } else {
+    moveToggleIn();
+  }
+});
+
+/* --- Make clicks inside panel not bubble to document (so it doesn't auto-close) --- */
+settingsPanel.addEventListener('click', e => e.stopPropagation());
+
+/* --- CLICK OUTSIDE TO CLOSE (respect drags) --- */
+document.addEventListener('click', e => {
+  if (dragMoved) return; // ignore accidental clicks from dragging
+  // If panel not open, nothing to do
+  if (!settingsPanel.classList.contains('open')) return;
+  // If click is outside both toggle and panel, close
+  if (!settingsPanel.contains(e.target) && !settingsToggle.contains(e.target)) {
+    settingsPanel.classList.remove('open');
+    moveToggleIn();
+  }
+});
+
+/* --- DARK MODE (load/save memory) --- */
+(function initDarkMode() {
+  // read saved theme (explicit 'enabled' equals dark, anything else = light)
+  const saved = localStorage.getItem('darkMode');
+  if (saved === 'enabled') {
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
+  }
+
+  // single handler to toggle + persist
+  if (darkModeBtn) {
+    darkModeBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // clicking the button shouldn't close the panel
+      const isDark = document.body.classList.toggle('dark-mode');
+
+      if (isDark) {
+        localStorage.setItem('darkMode', 'enabled');
+      } else {
+        localStorage.setItem('darkMode', 'disabled');
       }
     });
+  }
+})();
 
-    // About modal inline (simple)
-    function showAbout(){
-      const tpl = document.getElementById('modalTpl');
-      const node = tpl.content.cloneNode(true);
-      const backdrop = node.querySelector('.modal-backdrop');
-      const content = node.getElementById('modalContent');
-      const closeBtn = node.getElementById('modalClose');
-      content.innerHTML = `
-        <h3 style="margin:0 0 8px 0;color:#052a2a;font-family:'Playfair Display',serif">About — Louís Ryc</h3>
-        <p style="color:var(--muted);line-height:1.6;font-size:14px">I created this initiative to share a portion of my extra funds whenever available — and whenever I can. If you’ve reached this page through the link on my bio and are wondering about the value’s legitimacy and the purpose of the countdown: The prize is <strong style="color:var(--accent)">legit</strong>, but the value may vary based on available funds. The countdown indicates when participation becomes available; once it opens, it remains active only for a specific time.</p>
-      `;
-      document.body.appendChild(backdrop);
-      function remove(){ backdrop.remove(); document.removeEventListener('keydown', onEsc); }
-      closeBtn.onclick = remove;
-      backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) remove(); });
-      function onEsc(e){ if(e.key==='Escape') remove(); }
-      document.addEventListener('keydown', onEsc);
-    }
 
-    // Wire About quick link
-    const aboutBtn = document.getElementById('aboutBtn');
-    aboutBtn.addEventListener('click', showAbout);
 
-    // small progressive reveal for fade elements
-    window.addEventListener('load', ()=>{
-      document.querySelectorAll('.fade').forEach((el,i)=>{ el.style.animationDelay = (i*60)+'ms'; el.classList.add('visible')});
-    });
+</script>
 
-  </script></body>
+</body>
 </html>
